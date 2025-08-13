@@ -1,13 +1,17 @@
 // src/app/App.jsx
-import { BrowserRouter } from "react-router-dom";
+import '../App.css';
 import AppRoutes from "./routes";
 import { UserPrefProvider } from "../store/userPref";
-export default function App(){
+
+
+
+
+function App() {
   return (
-    <BrowserRouter>
-      <UserPrefProvider>
-        <AppRoutes />
-      </UserPrefProvider>
-    </BrowserRouter>
+    <div className="App">
+      <AppRoutes />
+    </div>
   );
 }
+
+export default App;
