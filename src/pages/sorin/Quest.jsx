@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
-import QuestStepPicker from "../components/modals/QuestStepPicker";
-import { getCafeById } from "../api/cafe";   // 너희 api/cafe.js에 함수만 추가하면 됨
-import { submitQuest } from "../api/quest"; // 목업 제출
+import QuestStepPicker from "../../components/feature/quest/QuestStepPicker";
+import { getCafeById } from "../../api/cafe";   // 너희 api/cafe.js에 함수만 추가하면 됨
+import { submitQuest } from "../../api/quest"; // 목업 제출
 
 export default function Quest(){
   const { id } = useParams();
