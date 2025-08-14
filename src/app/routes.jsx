@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import OnBoarding from '../pages/sorin/OnBoarding';
+import UserPreferences from '../components/feature/OnBoarding/UserPreferences'; 
+import OnBoardingComplete from '../components/feature/OnBoarding/OnBoardingComplete'; 
 import Quest from '../pages/sorin/Quest';
 import CafeDetail from '../pages/yunseo/CafeDetail';
 import MapPage from '../pages/yunseo/MapPage';
@@ -14,6 +16,8 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<OnBoarding />} />
+        <Route path="/preferences" element={<UserPreferences/>} />
+        <Route path="/complete" element={<OnBoardingComplete/>}/>
         <Route path="/quest/:id" element={<Quest />} />
         <Route path="/cafe" element={<CafeDetail />} />
         <Route path="/map" element={<MapPage />} />
@@ -22,4 +26,5 @@ export default function AppRoutes() {
     </BrowserRouter>
   );
 }
+
 
