@@ -15,33 +15,54 @@ const navigate = useNavigate();
     setNickname(value);
     setIsValid(value.length >= 1 && value.length <= 10); // 유효성 체크 (1~10자)
   };
-const handleNextClick = async () => { 
-    if (isValid) {
-      try {
-        // 1. 백엔드에 닉네임 전송 (가짜 API 호출)
-        const response = await loginUser(nickname);
+// Nickname.jsx 파일 내부
 
-        // 2. API 호출 성공 시
-        if (response.isSuccess) {
-          // 현재 사용자가 누구인지 localStorage에 기록
-          localStorage.setItem("current_user", response.result.name);
-          
-          // Context에도 닉네임 설정
-          setContextNickname(nickname);
-          
-          // 다음 페이지로 이동
-          navigate("/preferences");
-        } else {
-          // API가 실패 응답을 보냈을 때
-          alert(response.message);
+const handleNextClick = async () => { 
+  if (isValid) {
+    try {
+      // 1. API 호출
+      const response = await loginUser(nickname);
+
+      // 2. API 호출 성공 시
+      if (response.isSuccess) {
+        
+        // --- ✅ 이 부분이 추가/수정되었습니다 ---
+        
+        // 3. localStorage에서 전체 사용자 데이터 가져오기
+        const allUsersDataString = localStorage.getItem("zarit_users");
+        const allUsersData = allUsersDataString ? JSON.parse(allUsersDataString) : {};
+
+        // 4. 새로운 사용자인 경우에만 데이터 공간 생성
+        if (!allUsersData[nickname]) {
+          console.log(`새로운 사용자 [${nickname}]의 데이터 공간을 생성합니다.`);
+          allUsersData[nickname] = {
+            preferences: {}, // 취향 정보는 나중에 채워짐
+            quests: { coins: 0 } // 퀘스트 정보(코인) 초기화
+          };
+          // 수정된 전체 데이터를 다시 localStorage에 저장
+          localStorage.setItem("zarit_users", JSON.stringify(allUsersData));
         }
-      } catch (error) {
-        // 네트워크 에러 등 fetch 자체가 실패했을 때
-        console.error("로그인 API 호출 중 에러 발생:", error);
-        alert("서버와 통신 중 문제가 발생했습니다.");
+
+        // 5. 현재 사용자가 누구인지 localStorage에 기록
+        localStorage.setItem("current_user", response.result.name);
+        
+        // Context에도 닉네임 설정
+        setContextNickname(nickname);
+        
+        // 다음 페이지로 이동
+        navigate("/preferences");
+
+      } else {
+        // API가 실패 응답을 보냈을 때
+        alert(response.message);
       }
+    } catch (error) {
+      // 네트워크 에러 등 fetch 자체가 실패했을 때
+      console.error("로그인 API 호출 중 에러 발생:", error);
+      alert("서버와 통신 중 문제가 발생했습니다.");
     }
-  };
+  }
+};
   return (
     <div className="container">
         

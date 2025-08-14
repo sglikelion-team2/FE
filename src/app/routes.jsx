@@ -6,10 +6,8 @@ import OnBoardingComplete from '../components/feature/OnBoarding/OnBoardingCompl
 import Quest from '../pages/sorin/Quest';
 import CafeDetail from '../pages/yunseo/CafeDetail';
 import MapPage from '../pages/yunseo/MapPage';
+import QuestComplete from '../components/feature/quest/QuestComplete';
 
-
-
-// MapPage 컴포넌트를 import하세요. (예: import MapPage from '../pages/yunseo/MapPage';)
 
 export default function AppRoutes() {
   return (
@@ -18,10 +16,10 @@ export default function AppRoutes() {
         <Route path="/" element={<OnBoarding />} />
         <Route path="/preferences" element={<UserPreferences/>} />
         <Route path="/complete" element={<OnBoardingComplete/>}/>
-        <Route path="/quest/:id" element={<Quest />} />
+        <Route path="/quest" element={<Quest />} />
         <Route path="/cafe" element={<CafeDetail />} />
         <Route path="/map" element={<MapPage />} />
-        
+        <Route path="/quest-complete" element={<QuestComplete />} />
       </Routes>
     </BrowserRouter>
   );
