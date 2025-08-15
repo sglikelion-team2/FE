@@ -1,0 +1,98 @@
+/* CafeListItem.css */
+.cafe-item-container {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+  align-items: flex-start;
+}
+
+.cafe-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.cafe-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cafe-info-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.cafe-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.cafe-rating {
+  font-size: 14px;
+  color: #e6b823;
+}
+
+.cafe-status-line {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.operating-status {
+  font-weight: bold;
+  margin-right: 8px;
+}
+.operating-status.open { color: #3498db; }
+.operating-status.closed { color: #e74c3c; }
+
+.cafe-hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hashtag {
+  background-color: #f2f2f2;
+  color: #555;
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+
+.cafe-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  margin-left: 15px;
+}
+
+.congestion-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.status-green { background-color: #2ecc71; }
+.status-orange { background-color: #f39c12; }
+.status-red { background-color: #e74c3c; }
+
+.directions-button {
+  background-color: #e6b823;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
