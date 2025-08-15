@@ -1,25 +1,79 @@
-import { useParams, useNavigate } from "react-router-dom";
-import QuestStepPicker from "../../components/feature/quest/QuestStepPicker";
-import { getCafeById } from "../../api/cafe";   // 너희 api/cafe.js에 함수만 추가하면 됨
-import { submitQuest } from "../../api/quest"; // 목업 제출
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Quest(){
-  const { id } = useParams();
-  const nav = useNavigate();
-  const cafe = getCafeById(id); // mock에서 찾기
+import Noise from '../../components/feature/quest/steps/Noise';
+import Wifi from '../../components/feature/quest/steps/Wifi';
+import PowerSocket from '../../components/feature/quest/steps/PowerSocket';
+import Photo from '../../components/feature/quest/steps/Photo';
 
-  if(!cafe) return <div>존재하지 않는 매장</div>;
+const questConfig = {
+  noise: { component: Noise, reward: 10 },
+  wifi: { component: Wifi, reward: 10 },
+  power: { component: PowerSocket, reward: 15 },
+  photo: { component: Photo, reward: 25 },
+};
+const questKeys = Object.keys(questConfig);
+
+export default function Quest() {
+  const navigate = useNavigate();
+  const [currentQuestKey, setCurrentQuestKey] = useState(null);
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * questKeys.length);
+    setCurrentQuestKey(questKeys[randomIndex]);
+  }, []);
+
+  const handleQuestComplete = (questData) => {
+   
+    if (!currentQuestKey) {
+      console.error("2. 🛑 에러: currentQuestKey가 없습니다. 여기서 중단됩니다.");
+      return;
+    }
+  
+    const questInfo = questConfig[currentQuestKey];
+    if (!questInfo) {
+      console.error("3. 🛑 에러: 퀘스트 키에 해당하는 정보를 찾을 수 없습니다.");
+      return;
+    }
+   
+    const currentUser = localStorage.getItem('current_user');
+    if (!currentUser) {
+      console.error("4. 🛑 에러: 현재 사용자(current_user)를 찾을 수 없습니다.");
+      return;
+    }
+  
+    // 🚨 중요: localStorage 키 이름이 'zarit_users'가 맞는지 확인해주세요!
+    // 이전에 'jari_issoyo_users'로 만들었다면 여기서 데이터를 못 찾을 수 있습니다.
+    const allUsersData = JSON.parse(localStorage.getItem('zarit_users')) || {};
+    const userData = allUsersData[currentUser];
+    
+    if (!userData) {
+      
+      return;
+    }
+
+    // 보상 누적 및 저장 로직은 이전과 동일
+    const currentTotalReward = userData.quests?.coins || 0;
+    const newTotalReward = currentTotalReward + questInfo.reward;
+    userData.quests = { ...userData.quests, coins: newTotalReward };
+    localStorage.setItem('zarit_users', JSON.stringify(allUsersData));
+    
+    
+    // 최종 페이지 이동
+    navigate('/quest-complete', { state: { reward: questInfo.reward } });
+  };
+
+  const renderQuestStep = () => {
+    if (!currentQuestKey) {
+      return <div>퀘스트를 불러오는 중...</div>;
+    }
+    const QuestComponent = questConfig[currentQuestKey].component;
+    return <QuestComponent onComplete={handleQuestComplete} />;
+  };
 
   return (
-    <div className="quest-container">
-      <QuestStepPicker
-        cafe={cafe}
-        // seed 주면 같은 화면 재현 가능: seed={0|1|2|3}
-        onDone={async (payload)=>{
-          await submitQuest({ cafeId: id, ...payload });
-          nav("/reward"); // 완료 후 보상/리워드로
-        }}
-      />
+    <div className="quest-flow-container">
+      {renderQuestStep()}
     </div>
   );
 }

@@ -1,0 +1,59 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+.logo-area {
+  margin-bottom: 30px;
+  /* 로고 스타일 */
+}
+
+.nickname-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.input-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.nickname-input {
+  flex-grow: 1;
+  border: none;
+  padding: 5px;
+  outline: none;
+}
+
+.char-count {
+  position: absolute;
+  right: 40px;
+  color: #888;
+  font-size: 12px;
+}
+
+.next-button {
+  background-color: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+  margin-left: 10px;
+}
+
+.next-button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
