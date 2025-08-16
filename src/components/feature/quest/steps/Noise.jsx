@@ -31,24 +31,17 @@ export default function Noise({onComplete}) {
         <div className="noise-visualizer">
           <span className="icon">🔉</span>
           <div className="bars">
-            {/* noiseLevel에 따라 활성화된 막대 스타일을 동적으로 적용 */}
-            <div className={`bar ${noiseLevel >= 1 ? 'active' : ''}`}></div>
-            <div className={`bar ${noiseLevel >= 2 ? 'active' : ''}`}></div>
-            <div className={`bar ${noiseLevel >= 3 ? 'active' : ''}`}></div>
-            <div className={`bar ${noiseLevel >= 4 ? 'active' : ''}`}></div>
-            <div className={`bar ${noiseLevel >= 5 ? 'active' : ''}`}></div>
-          </div>
+                       {[1, 2, 3, 4, 5].map((level) => (
+              <div
+                key={level}
+                className={`bar ${noiseLevel >= level ? 'active' : ''}`}
+                onClick={() => setNoiseLevel(level)}
+              />
+            ))}
+            </div>
         </div>
         
-        <input
-          type="range"
-          min="1"
-          max="5"
-          step="1"
-          value={noiseLevel}
-          onChange={(e) => setNoiseLevel(e.target.value)}
-          className="noise-slider"
-        />
+        
       </div>
 
       <div className="quest-footer">
