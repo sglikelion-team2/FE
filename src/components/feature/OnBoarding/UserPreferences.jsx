@@ -24,7 +24,7 @@ export default function UserPreferences() {
 
 const mapToApiData = (prefs) => {
   const purposeMap = { "공부": 0, "레포트 작성": 1, "팀플": 2, "회의": 3 };
-  const moodMap = { "calm": 0, "적당": 1, "lively": 2, "chill": 3, "RnB": 4, "LoFi": 5, "whichever": 6 };
+  const moodMap = { "calm": 0, "적당": 1, "chill": 2, "RnB": 3, "LoFi": 4, "whichever": 5};
   
   let facilityCode = -1;
   if (prefs.outlet && prefs.wifi) facilityCode = 2;
