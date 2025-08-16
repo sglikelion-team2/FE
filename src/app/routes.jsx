@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import OnBoarding from '../pages/sorin/OnBoarding';
 import UserPreferences from '../components/feature/OnBoarding/UserPreferences'; 
-import OnBoardingComplete from '../components/feature/OnBoarding/OnBoardingComplete'; 
+import OnBoardingComplete from '../components/feature/OnBoarding/OnBoardingcomplete'; 
 import Quest from '../pages/sorin/Quest';
 import CafeDetail from '../pages/yunseo/CafeDetail';
 import MapPage from '../pages/yunseo/MapPage';
