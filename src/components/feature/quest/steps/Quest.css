@@ -98,6 +98,7 @@
   background-color: #e0e0e0;
   border-radius: 5px;
   transition: all 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 /* 막대 높이 설정 */
@@ -116,79 +117,76 @@
   width: 80%;
   margin-top: 20px;
 }
-
-
+/* --- Wifi.jsx 전용 스타일 --- */
 .wifi-visualizer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 150px; /* 시각화 영역 높이 */
+  height: 120px;
   width: 150px;
   margin-bottom: 20px;
 }
 
 .wifi-icon {
   position: relative;
-  width: 100px;
+  width: 130px; /* 가장 큰 곡선 너비에 맞춤 */
   height: 100px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
 }
 
-/* 모든 wifi 구성요소의 기본 색상 */
 .wifi-icon .wifi-dot,
 .wifi-icon .wifi-arc {
-  background-color: #e0e0e0;
+  cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 }
 
 .wifi-dot {
-  width: 12px;
-  height: 12px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   position: absolute;
   bottom: 0;
+  z-index: 5;
+  background-color: #e0e0e0;
 }
 
 .wifi-arc {
   position: absolute;
   bottom: 0;
-  border-radius: 50% 50% 0 0;
-  border: 6px solid white; /* 안쪽을 비우는 효과 */
-  background-clip: content-box; 
+  border-radius: 50% 50% 0 0; 
+  background-color: #e0e0e0;
+  box-shadow: 0 0 0 8px white inset;
 }
-.wifi-arc.arc-sm { width: 40px; height: 20px; }
-.wifi-arc.arc-md { width: 70px; height: 35px; }
-.wifi-arc.arc-lg { width: 100px; height: 50px; }
+
+/* 각 곡선의 크기 설정 */
+.wifi-arc.arc-sm { width: 40px; height: 20px; z-index: 4; }
+.wifi-arc.arc-md { width: 70px; height: 35px; z-index: 3; }
+.wifi-arc.arc-lg { width: 100px; height: 50px; z-index: 2; }
+.wifi-arc.arc-xl { width: 130px; height: 65px; z-index: 1; }
 
 
 /* 와이파이 강도에 따른 활성화 스타일 */
 .wifi-icon.strength-1 .wifi-dot,
 .wifi-icon.strength-2 .wifi-dot,
 .wifi-icon.strength-3 .wifi-dot,
-.wifi-icon.strength-4 .wifi-dot {
+.wifi-icon.strength-4 .wifi-dot,
+.wifi-icon.strength-5 .wifi-dot {
   background-color: #e6b823;
 }
 .wifi-icon.strength-2 .arc-sm,
 .wifi-icon.strength-3 .arc-sm,
-.wifi-icon.strength-4 .arc-sm {
+.wifi-icon.strength-4 .arc-sm,
+.wifi-icon.strength-5 .arc-sm {
   background-color: #e6b823;
 }
 .wifi-icon.strength-3 .arc-md,
-.wifi-icon.strength-4 .arc-md {
+.wifi-icon.strength-4 .arc-md,
+.wifi-icon.strength-5 .arc-md {
   background-color: #e6b823;
 }
-.wifi-icon.strength-4 .arc-lg {
-  background-color: #e6b823;
-}
-
-
-.wifi-slider {
-  width: 80%;
-  margin-top: 20px;
-}
-
+.wifi-icon.strength-4
 
 /* --- PowerSocket.jsx 전용 스타일 --- */
 .outlet-options {
