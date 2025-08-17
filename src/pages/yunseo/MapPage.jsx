@@ -5,7 +5,11 @@ import QuestArrival from '../../components/feature/quest/QuestArrival';
 import TopCafesSheet from '../../components/feature/map/TopCafesSheet';
 import MarkerDetail from "./markerDetail";
 import axios from "axios";
+
+
 import { placeData } from './pinPlace';
+import { topCafes } from '../../mocks/cafe-data'; //
+
 import img0 from '../../assets/c_0.png';
 import img1 from '../../assets/c_1.png';
 import img2 from '../../assets/c_2.png';
@@ -57,6 +61,9 @@ export default function MapPage() {
     cong: place.congestion,
     rank : place.rank
   }));
+
+//////top5 전용
+    const [topCafesWithDistance, setTopCafesWithDistance] = useState([]);
 
   const ICON_URLS = {
     0: img0,
@@ -188,6 +195,27 @@ export default function MapPage() {
         });
         mapInstance.current = map;
         const bounds = new window.Tmapv2.LatLngBounds();
+
+
+        /////top5관련 로직
+
+        const updatedTopCafes = await Promise.all(
+        topCafes.result.pin.map(async (cafe) => {
+          const routeInfo = await getRouteInfo({ lat: cafe.lat, lng: cafe.lng });
+          return {
+            ...cafe,
+            distance: routeInfo ? routeInfo.distance : null,
+            time: routeInfo ? routeInfo.time : null,
+          };
+        })
+      );
+setTopCafesWithDistance(updatedTopCafes);
+
+
+
+
+        //////
+
         
         places.forEach((m, index) => {
           const pos = new window.Tmapv2.LatLng(m.lat, m.lng);
@@ -261,7 +289,13 @@ export default function MapPage() {
       <button onClick={handleArrivalClick} style={{ position: 'absolute', top: '20px', left: '20px', padding: '10px', zIndex: '10' }}>
         (임시) 매장에 도착했어요?
       </button>
-      <TopCafesSheet />
+            <TopCafesSheet
+        topCafesWithDistance={topCafesWithDistance}
+        onFindRoute={drawRoute} // 👈 drawRoute 함수를 prop으로 전달
+        getCurrentLocation={getCurrentLocation} // 👈 필요시 현재 위치 함수도 전달
+        getRouteInfo={getRouteInfo} // 👈 필요시 길찾기 정보 함수도 전달
+        setSelectedMarker={setSelectedMarker} // 👈 필요시 마커 선택 상태도 전달
+      />
       {isQuestModalOpen && (
         <QuestArrival onYes={handleQuestAccept} onNo={handleQuestDecline} />
       )}

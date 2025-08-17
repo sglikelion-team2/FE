@@ -9,9 +9,19 @@ import cong1 from "../../assets/c_1.png";
 import cong2 from "../../assets/c_2.png";
 
 
+
+
+
+
 export default function MarkerDetail({ markerInfo, onClose, onFindRoute }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const nav = useNavigate();
+
+    const congestionStatus = {
+    0: { text: "여유", className: "status-green" },
+    1: { text: "보통", className: "status-orange" },
+    2: { text: "혼잡", className: "status-red" },
+  };
 
 
   if (!markerInfo) {
@@ -138,7 +148,6 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute }) {
         <div className="info">
           <div className="ditail_1">
             <div className="rate_con">
-              {/* ⭐️ renderStars 함수를 사용하여 별점 렌더링 */}
               <span>{renderStars(rate)}</span>
             </div>
             <div className="hour">영업시간 {open_hour}~{close_hour}</div>
@@ -148,7 +157,8 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute }) {
             <ul>
               <li>
                 <span>혼잡상태</span>
-                <img src={getCongestionInfo(cong).imgUrl} alt="혼잡도" />
+                {/* ⭐️ 이 부분이 수정된 코드입니다. */}
+                <div className={`congestion-dot ${congestionStatus[cong].className}`}></div>
                 <span>{getCongestionInfo(cong).text}</span>
               </li>
               <li>
