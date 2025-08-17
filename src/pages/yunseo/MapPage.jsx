@@ -9,6 +9,7 @@ import { placeData } from './pinPlace';
 import img0 from '../../assets/c_0.png';
 import img1 from '../../assets/c_1.png';
 import img2 from '../../assets/c_2.png';
+import "./markerDetail.css"
 
 const APP_KEY =
   (typeof window !== "undefined" && (window.__TMAP_KEY__ || "")) ||

@@ -7,6 +7,7 @@ import Quest from '../pages/sorin/Quest';
 import CafeDetail from '../pages/yunseo/CafeDetail';
 import MapPage from '../pages/yunseo/MapPage';
 import QuestComplete from '../components/feature/quest/QuestComplete';
+import CafePhoto from "../pages/yunseo/CafePhoto";
 
 
 export default function AppRoutes() {
@@ -20,6 +21,8 @@ export default function AppRoutes() {
         <Route path="/cafe" element={<CafeDetail />} />
         <Route path="/map" element={<MapPage />} />
         <Route path="/quest-complete" element={<QuestComplete />} />
+        <Route path="/cafe-photo" element={<CafePhoto />} />
+        
       </Routes>
     </BrowserRouter>
   );
