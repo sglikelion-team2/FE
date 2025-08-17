@@ -1,18 +1,48 @@
-// findRoute.jsx
+// FindRoute.jsx
 import React from 'react';
-import './findRoute.css';
+import './FindRoute.css';
 
-export default function FindRoutePanel({ info }) {
-  const { distance, time, title } = info;
+
+export default function FindRoute({ findRouteInfo, onClose }) {
+
+
+  if (!findRouteInfo) {
+    console.log(findRouteInfo);
+  }
+
+  console.log(findRouteInfo);
+
+  
+
+  const { distance, time , title } = findRouteInfo;
 
   return (
     <div className="find-route-panel">
-      <div className="route-header">
-        <h2 className="route-title">{title}까지 가는 길</h2>
-      </div>
-      <div className="route-info">
-        <p className="route-distance">총 거리: 약 <strong>{distance}km</strong></p>
-        <p className="route-time">예상 소요 시간: 약 <strong>{time}분</strong></p>
+      <div className="panel-content">
+    <button
+      className="close-button"
+      onClick={onClose}   // ✅ 부모가 초기화와 이동을 책임짐
+    >
+      X
+    </button>
+
+
+        <div className="route-summary">
+          <h2>경로 안내</h2>
+
+          <div className="info-box">
+            <span>도착지:</span>
+            <strong>{title}</strong>
+          </div>
+          <div className="info-box">
+            <span>총 거리:</span>
+            <strong>{distance} km</strong>
+          </div>
+          <div className="info-box">
+            <span>예상 시간:</span>
+            <strong>{time} 분</strong>
+          </div>
+        </div>
       </div>
     </div>
   );

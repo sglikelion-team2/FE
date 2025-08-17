@@ -1,43 +1,56 @@
-/* findRoute.css */
+/* FindRoute.css */
 .find-route-panel {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #fff;
-  padding: 20px;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 16px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
-.route-header {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.route-title {
-  margin: 0;
+.find-route-panel .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
   font-size: 1.2rem;
-  font-weight: bold;
+  cursor: pointer;
+  color: #888;
 }
 
-.route-info {
-  display: flex;
-  justify-content: space-around;
+.find-route-panel .route-summary {
   text-align: center;
 }
 
-.route-info p {
-  margin: 0;
+.find-route-panel h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.find-route-panel .info-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
   font-size: 1rem;
+}
+
+.find-route-panel .info-box span {
   color: #555;
 }
 
-.route-info strong {
-  color: #3478F6;
+.find-route-panel .info-box strong {
+  color: #000;
+  font-weight: bold;
 }
