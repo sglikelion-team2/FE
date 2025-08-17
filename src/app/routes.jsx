@@ -7,7 +7,7 @@ import Quest from '../pages/sorin/Quest';
 import CafeDetail from '../pages/yunseo/CafeDetail';
 import MapPage from '../pages/yunseo/MapPage';
 import QuestComplete from '../components/feature/quest/QuestComplete';
-import CafePhoto from "../pages/yunseo/CafePhoto";
+import CafePhoto from "../pages/yunseo/CafePhoto.jsx";
 
 
 export default function AppRoutes() {

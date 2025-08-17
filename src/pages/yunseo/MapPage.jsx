@@ -1,4 +1,3 @@
-// mapPage.jsx
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QuestArrival from '../../components/feature/quest/QuestArrival';
@@ -8,11 +7,13 @@ import axios from "axios";
 
 
 import { placeData } from './pinPlace';
-import { topCafes } from '../../mocks/cafe-data'; //
+import { topCafes } from '../../mocks/cafe-data';
 
 import img0 from '../../assets/c_0.png';
 import img1 from '../../assets/c_1.png';
 import img2 from '../../assets/c_2.png';
+
+import marker from '../../assets/marker.png';
 import "./markerDetail.css"
 
 const APP_KEY =
@@ -62,8 +63,7 @@ export default function MapPage() {
     rank : place.rank
   }));
 
-//////top5 전용
-    const [topCafesWithDistance, setTopCafesWithDistance] = useState([]);
+  const [topCafesWithDistance, setTopCafesWithDistance] = useState([]);
 
   const ICON_URLS = {
     0: img0,
@@ -98,7 +98,6 @@ export default function MapPage() {
     });
   };
 
-  // ✅ 길찾기 정보만 가져오는 함수 (경로를 그리지 않음)
   const getRouteInfo = async (destinationCoords) => {
     try {
       const startCoords = currentLocation || await getCurrentLocation();
@@ -147,17 +146,14 @@ export default function MapPage() {
     }
   };
 
-  // ✅ 실제로 경로를 그리는 함수
   const drawRoute = (routeData, startCoords, endCoords) => {
     if (!mapInstance.current || !routeData || routeData.length === 0) return;
 
-    // 기존 경로선 및 마커 제거
     if (routePolyline.current) {
       routePolyline.current.setMap(null);
       routePolyline.current = null;
     }
     
-    // 경로 그리기
     const points = routeData.map(([lng, lat]) => new window.Tmapv2.LatLng(lat, lng));
     routePolyline.current = new window.Tmapv2.Polyline({
       path: points,
@@ -172,100 +168,113 @@ export default function MapPage() {
     points.forEach(p => bounds.extend(p));
     
     mapInstance.current.fitBounds(bounds, { left: 20, top: 20, right: 20, bottom: 20 });
-    setSelectedMarker(null); // 패널 닫기
+    setSelectedMarker(null);
   };
 
   useEffect(() => {
     const markers = [];
     const currentMapRef = mapRef.current;
-
+    
     const init = async () => {
-      try {
-        await waitForTmapReady();
-        const el = currentMapRef;
-        if (!el || el.firstChild) return;
+        try {
+            await waitForTmapReady();
+            const el = currentMapRef;
+            if (!el || el.firstChild) return;
 
-        const map = new window.Tmapv2.Map("map_div", {
-          center: new window.Tmapv2.LatLng(37.5665, 126.9780),
-          width: "100%",
-          height: "884px",
-          zoom: 14,
-          zoomControl: true,
-          scrollwheel: true,
-        });
-        mapInstance.current = map;
-        const bounds = new window.Tmapv2.LatLngBounds();
-
-
-        /////top5관련 로직
-
-        const updatedTopCafes = await Promise.all(
-        topCafes.result.pin.map(async (cafe) => {
-          const routeInfo = await getRouteInfo({ lat: cafe.lat, lng: cafe.lng });
-          return {
-            ...cafe,
-            distance: routeInfo ? routeInfo.distance : null,
-            time: routeInfo ? routeInfo.time : null,
-          };
-        })
-      );
-setTopCafesWithDistance(updatedTopCafes);
-
-
-
-
-        //////
-
-        
-        places.forEach((m, index) => {
-          const pos = new window.Tmapv2.LatLng(m.lat, m.lng);
-          let markerIconUrl;
-          if (m.cong === 0) { markerIconUrl = ICON_URLS[0]; } 
-          else if (m.cong === 1) { markerIconUrl = ICON_URLS[1]; } 
-          else if (m.cong === 2) { markerIconUrl = ICON_URLS[2]; } 
-          else { markerIconUrl = "https://topopen.tmap.co.kr/imgs/marker/pin_b_m_s.png"; }
-
-          const marker = new window.Tmapv2.Marker({ 
-            position: pos, 
-            icon: markerIconUrl,
-            iconSize: new window.Tmapv2.Size(24, 24),
-            map 
-          });
-
-          if (m.rank >= 1 && m.rank <= 5) {
-            const starIcon = new window.Tmapv2.Marker({
-              position: pos, 
-              icon: ICON_URLS[3],
-              iconSize: new window.Tmapv2.Size(24, 24),
-              map,
+            // 맵 초기화
+            const map = new window.Tmapv2.Map("map_div", {
+                center: new window.Tmapv2.LatLng(37.5665, 126.9780),
+                width: "100%",
+                height: "884px",
+                zoom: 14,
+                zoomControl: true,
+                scrollwheel: true,
             });
-            starIcon.markerData = { ...m, coords: { lat: m.lat, lng: m.lng } };
-            starIcon.addListener("click", async () => {
-              const routeInfo = await getRouteInfo(starIcon.markerData.coords);
-              if (routeInfo) {
-                setSelectedMarker({ ...starIcon.markerData, ...routeInfo });
-              }
-            });
-            markers.push(starIcon);
-          }
-          
-          marker.markerData = { ...m, coords: { lat: m.lat, lng: m.lng } };
-          marker.addListener("click", async () => {
-            const routeInfo = await getRouteInfo(marker.markerData.coords);
-            if (routeInfo) {
-              setSelectedMarker({ ...marker.markerData, ...routeInfo });
+            mapInstance.current = map;
+            const bounds = new window.Tmapv2.LatLngBounds();
+
+            let userLocation = null;
+            try {
+                userLocation = await getCurrentLocation();
+                const pos = new window.Tmapv2.LatLng(userLocation.lat, userLocation.lng);
+                const userMarkerIconUrl = `${marker}`;
+                const userMarker = new window.Tmapv2.Marker({
+                    position: pos,
+                    icon: userMarkerIconUrl,
+                    iconSize: new window.Tmapv2.Size(16, 16),
+                    map: mapInstance.current,
+                });
+                markers.push(userMarker);
+                bounds.extend(pos); 
+                map.setCenter(pos);
+                setCurrentLocation(userLocation);
+            } catch (locationError) {
+                console.warn("⚠️ 현재 위치를 가져오는 데 실패했습니다:", locationError);
             }
-          });
-          bounds.extend(pos);
-          markers.push(marker);
-        });
-        
-        if (!bounds.isEmpty()) {
-          map.fitBounds(bounds, { left: 20, top: 20, right: 20, bottom: 20 });
+
+            // 모든 카페 마커를 생성하고 bounds에 추가
+            for (const m of places) {
+                const pos = new window.Tmapv2.LatLng(m.lat, m.lng);
+                let markerIconUrl;
+                if (m.cong === 0) { markerIconUrl = ICON_URLS[0]; }
+                else if (m.cong === 1) { markerIconUrl = ICON_URLS[1]; }
+                else if (m.cong === 2) { markerIconUrl = ICON_URLS[2]; }
+                else { markerIconUrl = ICON_URLS[2]; }
+
+                const marker = new window.Tmapv2.Marker({
+                    position: pos,
+                    icon: markerIconUrl,
+                    iconSize: new window.Tmapv2.Size(24, 24),
+                    map
+                });
+
+                if (m.rank >= 1 && m.rank <= 5) {
+                    const starIcon = new window.Tmapv2.Marker({
+                        position: pos,
+                        icon: ICON_URLS[3],
+                        iconSize: new window.Tmapv2.Size(24, 24),
+                        map,
+                    });
+                    starIcon.markerData = { ...m, coords: { lat: m.lat, lng: m.lng } };
+                    starIcon.addListener("click", async () => {
+                        const routeInfo = await getRouteInfo(starIcon.markerData.coords);
+                        if (routeInfo) {
+                            setSelectedMarker({ ...starIcon.markerData, ...routeInfo });
+                        }
+                    });
+                    markers.push(starIcon);
+                }
+
+                marker.markerData = { ...m, coords: { lat: m.lat, lng: m.lng } };
+                marker.addListener("click", async () => {
+                    const routeInfo = await getRouteInfo(marker.markerData.coords);
+                    if (routeInfo) {
+                        setSelectedMarker({ ...marker.markerData, ...routeInfo });
+                    }
+                });
+                bounds.extend(pos); 
+                markers.push(marker);
+            }
+
+            // Top5 카페 데이터 업데이트 로직 (기존과 동일)
+            const updatedTopCafes = await Promise.all(
+                topCafes.result.pin.map(async (cafe) => {
+                    const routeInfo = await getRouteInfo({ lat: cafe.lat, lng: cafe.lng });
+                    return {
+                        ...cafe,
+                        distance: routeInfo ? routeInfo.distance : null,
+                        time: routeInfo ? routeInfo.time : null,
+                    };
+                })
+            );
+            setTopCafesWithDistance(updatedTopCafes);
+            
+            if (!bounds.isEmpty()) {
+                map.fitBounds(bounds, { left: 20, top: 20, right: 20, bottom: 20 });
+            }
+        } catch (e) {
+            console.error(e);
         }
-      } catch (e) {
-        console.error(e);
-      }
     };
     init();
 
@@ -289,12 +298,12 @@ setTopCafesWithDistance(updatedTopCafes);
       <button onClick={handleArrivalClick} style={{ position: 'absolute', top: '20px', left: '20px', padding: '10px', zIndex: '10' }}>
         (임시) 매장에 도착했어요?
       </button>
-            <TopCafesSheet
+      <TopCafesSheet
         topCafesWithDistance={topCafesWithDistance}
-        onFindRoute={drawRoute} // 👈 drawRoute 함수를 prop으로 전달
-        getCurrentLocation={getCurrentLocation} // 👈 필요시 현재 위치 함수도 전달
-        getRouteInfo={getRouteInfo} // 👈 필요시 길찾기 정보 함수도 전달
-        setSelectedMarker={setSelectedMarker} // 👈 필요시 마커 선택 상태도 전달
+        onFindRoute={drawRoute}
+        getCurrentLocation={getCurrentLocation}
+        getRouteInfo={getRouteInfo}
+        setSelectedMarker={setSelectedMarker}
       />
       {isQuestModalOpen && (
         <QuestArrival onYes={handleQuestAccept} onNo={handleQuestDecline} />
