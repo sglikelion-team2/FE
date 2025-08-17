@@ -79,3 +79,12 @@
 .cafe-list::-webkit-scrollbar {
   display: none;  /* 스크롤바 숨기기 */
 }
+
+
+/* TopDetail 전용 컨테이너 - 부모 시트 레이아웃과 충돌 방지 */
+.topdetail-container {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  padding-bottom: 8px; /* 선택 */
+}

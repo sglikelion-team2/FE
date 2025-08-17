@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './TopCafesSheet.css';
 import { topCafes } from '../../../mocks/cafe-data';
 import CafeListItem from './CafeListItem';
@@ -12,6 +12,18 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
   const [nickname, setNickname] = useState('');
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
+
+
+  ///정렬
+
+    const toInt = (v) => Number.parseInt(v, 10) || 0;
+    const sortedByRank = useMemo(
+    () => [...(topCafesWithDistance || [])].sort((a, b) => toInt(a.rank) - toInt(b.rank)),
+   [topCafesWithDistance]
+    );
+
+
+  ///
 
   useEffect(() => {
     const now = new Date();
@@ -32,35 +44,34 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
     setIsExpanded(true);
   };
   
-  const handleModeChange = (isDetail) => {
-    if (isDetail && !selectedCafe && topCafesWithDistance.length > 0) {
-      setSelectedCafe(topCafesWithDistance[0]);
-    }
-    setIsDetailView(isDetail);
-    if (!isDetail) {
-      setSelectedCafe(null);
-    }
-  };
+ const handleModeChange = (isDetail) => {
+   if (isDetail) {
+     // 상세 모드 진입 시: 시트 펼치기 + 기본 카페 선택
+     setIsExpanded(true);
+     if (!selectedCafe && sortedByRank.length > 0) {
+       // rank=1이 있으면 그걸, 없으면 첫 요소
+      setSelectedCafe(sortedByRank.find(c => toInt(c.rank) === 1) || sortedByRank[0]);
+       }
+     setIsDetailView(true);
+   } else {
+     setIsDetailView(false);
+     setSelectedCafe(null);
+   }
+ };
 
   // ⭐️ 다음 카페로 이동하는 함수
-  const handleNextCafe = () => {
-    if (selectedCafe) {
-      const currentIndex = topCafesWithDistance.findIndex(c => c.rank === selectedCafe.rank);
-      if (currentIndex < topCafesWithDistance.length - 1) {
-        setSelectedCafe(topCafesWithDistance[currentIndex + 1]);
-      }
-    }
-  };
+ const handleNextCafe = () => {
+   if (!selectedCafe) return;
+   const next = sortedByRank.find(c => toInt(c.rank) === toInt(selectedCafe.rank) + 1);
+  if (next) setSelectedCafe(next);
+ };
 
   // ⭐️ 이전 카페로 이동하는 함수
-  const handlePrevCafe = () => {
-    if (selectedCafe) {
-      const currentIndex = topCafesWithDistance.findIndex(c => c.rank === selectedCafe.rank);
-      if (currentIndex > 0) {
-        setSelectedCafe(topCafesWithDistance[currentIndex - 1]);
-      }
-    }
-  };
+ const handlePrevCafe = () => {
+   if (!selectedCafe) return;
+   const prev = sortedByRank.find(c => toInt(c.rank) === toInt(selectedCafe.rank) - 1);
+   if (prev) setSelectedCafe(prev);
+ };
 
   return (
     <div className={`sheet-container ${isExpanded ? 'expanded' : ''}`}>
@@ -96,18 +107,20 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
         </div>
       </div>
       <div className="cafe-list">
-        {isDetailView && selectedCafe ? (
-          <TopDetail
-            cafe={selectedCafe}
-            onFindRoute={onFindRoute}
-            getRouteInfo={getRouteInfo}
-            getCurrentLocation={getCurrentLocation}
-            onNext={handleNextCafe} // ⭐️ prop 전달
-            onPrev={handlePrevCafe} // ⭐️ prop 전달
-            totalCafes={topCafesWithDistance.length} // ⭐️ 전체 카페 수 전달
-          />
-        ) : (
-          topCafesWithDistance.map(cafe => (
+   {isDetailView ? (
+     (selectedCafe || sortedByRank?.[0])
+     ? <TopDetail
+        cafe={selectedCafe || sortedByRank[0]}
+         onFindRoute={onFindRoute}
+         getRouteInfo={getRouteInfo}
+         getCurrentLocation={getCurrentLocation}
+         onNext={handleNextCafe}
+         onPrev={handlePrevCafe}
+         totalCafes={sortedByRank.length}
+       />
+    : <div className="empty">표시할 장소가 없습니다.</div>
+ ) : (
+          sortedByRank.map(cafe => (
             <CafeListItem
               key={cafe.rank}
               cafe={cafe}

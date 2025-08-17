@@ -38,13 +38,18 @@ export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurre
 
   const handleFindRoute = async (e) => {
     e.stopPropagation();
-    const startCoords = await getCurrentLocation();
-    const endCoords = { lat: lat, lng: lng };
-    const routeInfo = await getRouteInfo(endCoords);
-
-    if (routeInfo) {
-      onFindRoute(routeInfo.routeData, startCoords, endCoords);
-    }
+    const endCoords = { lat, lng };
+    const info = await getRouteInfo(endCoords); // info.distance("x.x"), info.time("mm"), info.startCoords 포함
+    if (!info) return;
+    const placeTitle = pinname || address || '도착지';
+    onFindRoute(
+     info.routeData,
+      info.startCoords,
+     info.endCoords,
+      parseFloat(info.distance), // km 숫자
+      parseFloat(info.time),     // 분 숫자
+      placeTitle                 // 목적지 이름
+    );
   };
 
   return (
