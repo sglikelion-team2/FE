@@ -1,135 +1,124 @@
-/* 전체 컨테이너 및 기본 레이아웃 */
+/* UserPreferences.css */
 .pref-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: 100%;
-  padding: 20px 25px;
+  padding: 20px 30px 50px 30px;
   box-sizing: border-box;
-  background-color: #ffffff;
-  gap: 20px; /* 섹션 간의 간격 */
 }
 
-.pref-container h1 {
-  font-size: 24px;
+/* --- 헤더 --- */
+.pref-header {
+  margin-bottom: 20px;
+}
+.progress-bar 
+{   display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 40px; }
+.progress-step 
+{   flex: 1;
+  height: 4px;
+  background-color: #f0f0f0;
+  border-radius: 2px; }
+.progress-step.active 
+{ background-color: #333; }
+
+.back-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.back-button img { height: 24px; }
+
+.pref-title {
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 10px;
-  text-align: left;
+  line-height: 1.4;
+  color: #333;
+}
+.pref-title .nickname {
+  color: #E6B823; /* 피그마 메인 컬러 */
 }
 
-.pref-section h3 {
+/* --- 각 섹션 --- */
+.pref-section {
+  margin-bottom: 25px;
+}
+.section-title {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 15px;
-  text-align: left;
 }
-
-/* 방문 목적 (커스텀 라디오 버튼) */
-.purpose-options {
+.options-grid {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 10px;
 }
-
-.custom-radio input[type="radio"] {
-  display: none; /* 실제 라디오 버튼 숨기기 */
+.options-grid.mood{
+    display: grid;
+  grid-template-columns: repeat(5, auto); /* 수정: minmax 추가 */
+  gap: 8px; 
+  justify-content: start;
 }
 
-.custom-radio span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 40px;
-  padding: 0 10px;
-  background-color: #f0f0f0;
-  border-radius: 20px; /* 타원형 모양 */
-  font-size: 14px;
+/* 옵션 버튼 (칩) 스타일 */
+.option-chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-size: 12px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-align: center;
+  white-space: nowrap;
+    text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-/* 선택됐을 때의 스타일 */
-.custom-radio input[type="radio"]:checked + span {
-  background-color: #e6b823; /* 노란색 계열 */
+.option-chip.selected {
+  background-color: #E6B823;
   color: white;
+  border-color: #E6B823;
   font-weight: bold;
 }
 
-
-/* 분위기 및 음악 (커스텀 체크박스) */
-.mood-options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3개의 열 */
-  grid-template-rows: repeat(2, auto);    /* 2개의 행 */
-  gap: 12px;
-}
-
-.custom-checkbox input[type="radio"] {
-  display: none; /* 실제 체크박스 숨기기 */
-}
-
-.custom-checkbox span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 40px;
-  background-color: #f0f0f0;
-  border-radius: 10px; /* 둥근 사각형 */
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-/* 선택됐을 때의 스타일 */
-.custom-checkbox input[type="radio"]:checked + span {
-  background-color: #e6b823;
-  color: white;
-  font-weight: bold;
-}
-
-
-/* 필수 시설 (기본 체크박스) */
-.facility-options {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: #fff;
+/* --- 필수 옵션 --- */
+.needs-options {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
-.facility-options label {
+.need-item {
   display: flex;
   align-items: center;
+  gap: 10px;
   font-size: 16px;
-  gap: 10px; /* 체크박스와 텍스트 사이 간격 */
 }
-
-.facility-options input[type="checkbox"] {
+.need-item input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  accent-color: #e6b823; /* 체크박스 선택 색상 변경 */
+  accent-color: black
+  ;
 }
 
-
-/* Next 버튼 */
-.next-button {
+/* --- 하단 버튼 --- */
+.pref-footer {
+  margin-top: auto;
+}
+.find-button {
   width: 100%;
-  padding: 15px;
-  margin-top: auto; /* 버튼을 맨 아래로 밀어냄 */
-  background-color: #e6b823;
-  color: white;
+  padding: 0;
   border: none;
-  border-radius: 8px;
+  background: none;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
 }
-
-.next-button:disabled {
-  background-color: #ccc;
+.find-button img {
+  width: 100%;
+  height: 60px;
+}
+.find-button:disabled {
+  cursor: not-allowed;
 }

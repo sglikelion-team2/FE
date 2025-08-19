@@ -1,0 +1,59 @@
+/* SplashScreen.css */
+
+.splash-container {
+  display: flex;
+  flex-direction: column; /* 요소를 세로로 배치 */
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  
+  /* ✅ Figma에서 전달받은 배경 스타일 적용 */
+  background: radial-gradient(169.87% 36.27% at 50% 50%, rgba(251, 191, 36, 0.3) 0%, #FFFFFF 100%);
+}
+
+.splash-text-wrapper {
+  /* ✅ Figma에서 전달받은 "글씨 부분" 크기 적용 */
+  width: 286px;
+  height: 84px;
+  text-align: center; /* 텍스트 중앙 정렬 */
+  margin-bottom: 20px; /* 로고 박스와의 간격 */
+}
+
+.splash-intro-text {
+  font-size: 24px; /* 피그마에서 확인 필요 */
+  font-weight: bold; /* 피그마에서 확인 필요 */
+  line-height: 1.5;
+  color: #333; /* 피그마에서 확인 필요 */
+}
+
+.splash-logo-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color:none; /* 피그마에서 배경색 확인 필요 */
+  border-radius: 20px; /* 피그마에서 확인 필요 */
+  
+  /* ✅ Figma에서 전달받은 "로고 부분" 패딩과 gap 적용 */
+  padding: 51px 40px;
+  gap: 10px;
+}
+
+.splash-logo {
+
+  width: 149px;
+  height: 148px;
+}
+
+.splash-brand-title {
+  /* ✅ 전달해주신 Figma 값을 CSS 속성으로 변환하여 적용 */
+  font-family: 'Pretendard', sans-serif; /* Pretendard 폰트가 설치/import 되어 있어야 합니다. */
+  font-weight: 700; /* Bold는 font-weight: 700; 입니다. */
+  font-size: 30px;
+  line-height: 1.5; /* 150%는 1.5와 같습니다. */
+  letter-spacing: 0.0057em; /* 0.57%는 em 단위로 변환하는 것이 일반적입니다. */
+  text-align: center;
+  color: #000; /* 이전 코드의 값을 유지, 필요시 피그마에서 확인 */
+}
