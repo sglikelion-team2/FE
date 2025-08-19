@@ -1,3 +1,27 @@
+@font-face {
+  font-family: 'LotteMartDream';
+  font-style: normal;
+  font-weight: 400;
+  src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff') format('woff');
+}
+@font-face {
+  font-family: 'LotteMartDream';
+  font-style: normal;
+  font-weight: 700;
+  src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamBold.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamBold.woff') format('woff');
+}
+@font-face {
+  font-family: 'LotteMartDream';
+  font-style: normal;
+  font-weight: 300;
+  src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamLight.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamLight.woff') format('woff');
+}
+.lottemartdream * {
+ font-family: 'LotteMartDream', sans-serif;
+}
+
+
+
 /* TopCafesSheet.css */
 
 /* 'TopCafesSheet' 전체 컨테이너 */
@@ -13,9 +37,11 @@
   z-index: 500;
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: auto;  /* 높이를 자동으로 계산 */
   max-height: 85vh;  /* 최대 높이를 85%로 설정 */
   overflow: hidden; /* 내용이 넘칠 경우 스크롤을 적용 */
+  padding: 0 29px;
 }
 
 /* 'expanded' 클래스가 적용된 경우 바가 올라가면서 화면 표시 */
@@ -27,28 +53,51 @@
 .sheet-header {
   position: sticky;
   top: 0;
-  background: #fff;
-  padding: 10px 20px 16px;
+  background: #ffffff;
+  /* padding: auto; */
+
   cursor: pointer;
   flex-shrink: 0;
   z-index: 2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  /* 헤더와 내용 구분 */
+  width: 100%;
+}
+
+.sheet-title{
+  color: #000000;
+
+  /* cheading-small-bold */
+  font-family: "LotteMartDream";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%; /* 28px */
+  letter-spacing: -0.24px;
 }
 
 /* 드래그 바 (grabber) */
-.grabber {
+/* .grabber {
   width: 40px;
   height: 5px;
   background: #d9d9d9;
   border-radius: 4px;
   margin: 0 auto 10px;
+  padding: auto;
+} */
+
+.grabber-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 0 32px 0;
+  width: 100%;
+  
 }
 
 /* 헤더 내용 */
 .header-content {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  justify-content: space-between;
+
 }
 
 .header-content .current-time {
@@ -69,10 +118,9 @@
 
 /* 카페 리스트 영역 */
 .cafe-list {
-  flex: 1;
+  background-color: #e6b823;
+
   overflow-y: auto;
-  padding: 10px 20px;
-  padding-bottom: 20px;  /* 바닥 여백을 위한 패딩 */
   -webkit-overflow-scrolling: touch; /* 아이폰 하단 안전 영역 여백 */
 }
 
@@ -82,9 +130,19 @@
 
 
 /* TopDetail 전용 컨테이너 - 부모 시트 레이아웃과 충돌 방지 */
-.topdetail-container {
+/* .topdetail-container {
   position: relative;
   background: #fff;
   border-radius: 14px;
-  padding-bottom: 8px; /* 선택 */
+
+} */
+
+
+
+.mode-toggle-icons{
+  display: flex;
+  gap: 4px;
+  width: 100px;
+  align-items: flex-end;
+  justify-content: flex-end;
 }

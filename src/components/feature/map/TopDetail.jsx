@@ -1,25 +1,91 @@
 // TopDetail.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CafePhotoInline } from '../../../pages/yunseo/CafePhoto.jsx';
 
-// 혼잡도 아이콘(필요 시 경로 그대로 사용)
-import cong0 from "../../../assets/c_0.png";
-import cong1 from "../../../assets/c_1.png";
-import cong2 from "../../../assets/c_2.png";
+// 아이콘
+import congIcon from "../../../assets/map/detail_info/cong.svg";
+import noiseIcon from "../../../assets/map/detail_info/noise.svg";
+import seatsIcon from "../../../assets/map/detail_info/seats.svg";
+import wifiIcon from "../../../assets/map/detail_info/wifi.svg";
+
+
+import rank1 from "../../../assets/map/detail_info/Rank=1.svg";
+import rank2 from "../../../assets/map/detail_info/Rank=2.svg";
+import rank3 from "../../../assets/map/detail_info/Rank=3.svg";
+import rank4 from "../../../assets/map/detail_info/Rank=4.svg";
+import rank5 from "../../../assets/map/detail_info/Rank=5.svg";
+
+import bar from "../../../assets/map/detail_info/Divide_line.svg"
+import routeIcon from "../../../assets/map/detail_info/routeIcon.svg";
+
+
+import "./TopDetail.css";
+const rankImgs = [null, rank1, rank2, rank3, rank4, rank5];
 
 // ⭐️ onNext, onPrev, totalCafes prop 포함
 export default function TopDetail({
   cafe,
   onFindRoute,           // (routeData, start, end, distKm, timeMin, placeTitle) => void
   getRouteInfo,          // (coords) => Promise<{ distance, time, routeData, startCoords, endCoords }>
-  getCurrentLocation,    // 필요 시 사용 가능(현재는 getRouteInfo가 startCoords를 반환하므로 필수는 아님)
+  getCurrentLocation,    // 필요 시 사용 가능
   onNext,
   onPrev,
   totalCafes
 }) {
-   const [view, setView] = useState('detail');
-  
+  const [view, setView] = useState('detail');
+
+// 상단 import/상태는 동일
+
+    // ====== 스와이프 상태 ======
+    const swipeRef = useRef({ tracking: false, startX: 0, startY: 0, type: 'mouse' });
+    const SWIPE_THRESHOLD_X = 40;
+    const SWIPE_TOLERANCE_Y = 30;
+
+    const handlePointerDown = (e) => {
+      if (view !== 'detail') return;
+      // 마우스는 왼쪽 버튼 드래그만 허용
+      if (e.pointerType === 'mouse' && (e.buttons & 1) !== 1) return;
+
+      swipeRef.current.tracking = true;
+      swipeRef.current.startX = e.clientX;
+      swipeRef.current.startY = e.clientY;
+      swipeRef.current.type = e.pointerType; // 'mouse' | 'touch' | 'pen'
+    };
+
+    const handlePointerMove = (e) => {
+      if (!swipeRef.current.tracking || view !== 'detail') return;
+
+      const dx = e.clientX - swipeRef.current.startX;
+      const dy = e.clientY - swipeRef.current.startY;
+
+      // 세로 스크롤 의도가 더 크면 취소
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SWIPE_TOLERANCE_Y) {
+        swipeRef.current.tracking = false;
+        return;
+      }
+
+      if (Math.abs(dx) >= SWIPE_THRESHOLD_X) {
+        if (dx < 0 && onNext) onNext();   // 왼쪽 → 다음
+        if (dx > 0 && onPrev) onPrev();   // 오른쪽 → 이전
+        swipeRef.current.tracking = false;
+      }
+    };
+
+    const handlePointerUp = () => { swipeRef.current.tracking = false; };
+    const handlePointerCancel = () => { swipeRef.current.tracking = false; };
+
+
+  const handleTouchEnd = () => {
+    swipeRef.current.tracking = false;
+  };
+
+  // (옵션) 데스크톱 키보드 ←/→ 지원
+  const handleKeyDown = (e) => {
+    if (view !== 'detail') return;
+    if (e.key === 'ArrowLeft' && onPrev) onPrev();
+    if (e.key === 'ArrowRight' && onNext) onNext();
+  };
 
   if (!cafe) return null;
 
@@ -28,6 +94,7 @@ export default function TopDetail({
     pinname,
     title,
     name,
+    rank,
     address,
     lat,
     lng,
@@ -39,8 +106,8 @@ export default function TopDetail({
     seat,
     wifi,
     img_url,
-    distance,  // 리스트에서 내려온 요약용(문자열 km일 수 있음)
-    time       // 리스트에서 내려온 요약용(문자열 분일 수 있음)
+    distance,  // "x.x" km (문자열일 수 있음)
+    time       // "mm" 분 (문자열일 수 있음)
   } = cafe;
 
   // 목적지 제목 우선순위
@@ -55,10 +122,10 @@ export default function TopDetail({
 
   const getCongestionInfo = (level) => {
     switch (level) {
-      case 0: return { text: '여유', imgUrl: cong0 };
-      case 1: return { text: '보통', imgUrl: cong1 };
-      case 2: return { text: '혼잡', imgUrl: cong2 };
-      default: return { text: '정보 없음', imgUrl: '' };
+      case 0: return { text: '여유' };
+      case 1: return { text: '보통' };
+      case 2: return { text: '혼잡' };
+      default: return { text: '정보 없음' };
     }
   };
 
@@ -73,6 +140,12 @@ export default function TopDetail({
       default: return { text: '데이터가 없습니다.' };
     }
   };
+
+
+    const rankNum = Number.parseInt(rank, 10) || 0;  // 1~5 기대
+    const rankSrc = rankImgs[rankNum] || null;
+
+
 
   const renderStars = (rating) => {
     const r = Number(rating) || 0;
@@ -91,92 +164,146 @@ export default function TopDetail({
         info.routeData,
         info.startCoords,
         info.endCoords,
-        parseFloat(info.distance), // "x.x" → number (km)
-        parseFloat(info.time),     // "mm"  → number (minutes)
-        placeTitle                 // 목적지 이름
+        parseFloat(info.distance),
+        parseFloat(info.time),
+        placeTitle
       );
     } catch (e) {
       console.error('handleFindRoute error:', e);
     }
   };
 
-  return (
-   <div className="topdetail-container">
+return (
+  <div
+    className="topdetail-container"
+    onPointerDown={handlePointerDown}
+    onPointerMove={handlePointerMove}
+    onPointerUp={handlePointerUp}
+    onPointerCancel={handlePointerCancel}
+    onKeyDown={handleKeyDown}
+    tabIndex={0}
+    role="region"
+    aria-label="장소 상세 스와이프 영역"
+  >
+    <div className="sheet-content">
+      <div className="header">
+        <div className="cafe-name">{placeTitle}</div>
+        <span>{distance}km</span>
+        {rankSrc && (   /* rank가 없을 때 빈 img 방지 */
+          <img
+            className="rank-badge"
+            src={rankSrc}
+            alt={`Rank ${rankNum}`}
+          />
+        )}
+      </div>
 
+      {view === 'detail' ? (
+        <>
+          <div className="img_con">
+            {img_url && <img src={img_url} alt="" width="160px" />}
 
-      <div className="sheet-content">
-        <div className="header">
-          <h2>{placeTitle}</h2>
-          {/* 주의: cafe.distance/cafe.time은 요약용일 수 있음. 단위 일관성을 맞춰 표시 */}
-          {distance && time && (
-            <p>{distance}km, {time}분</p>
-          )}
-        </div>
-
-       {/* ⬇ 본문만 스왑: 상세 ↔ 사진 */}
-       {view === 'detail' ? (
-         <>
-           <div className="img_con">
-             {img_url && <img src={img_url} alt="" width="100px" />}
             <div className="imgs">
-               {img_url && (
-                 <img
-                   src={img_url}
-                   alt=""
-                   width="100px"
-                   onClick={() => setView('photos')}
-                   style={{ cursor: 'pointer' }}
-                 />
-               )}
-             </div>
-           </div>
+              {img_url && (
+                <img
+                  src={img_url}
+                  alt=""
+                  width="100%"
+                  onClick={() => setView('photos')}
+                  style={{ cursor: 'pointer' }}
+                />
+              )}
+              <div
+                className="plus"
+                onClick={() => setView('photos')}   // 사진 보기로 전환
+                style={{ cursor: 'pointer' }}  // div엔 width 속성 대신 style
+              >
+                + 더보기
+              </div>
+            </div>
+          </div>
 
-           <div className="info">
-                  <div className="controlBtns">
-        {/* 닫기/이전/다음 등 헤더 컨트롤은 기존 스타일에 맞춰 필요 시 추가 */}
-        {onPrev && <button className="nav-button prev" onClick={onPrev}>‹</button>}
-        {onNext && <button className="nav-button next" onClick={onNext}>›</button>}
-      </div>
-             <div className="ditail_1">
-               <div className="rate_con">
-                 <span>{renderStars(rate)}</span>
-               </div>
-               {(open_hour || close_hour) && (
-                 <div className="hour">영업시간 {open_hour ?? '-'}~{close_hour ?? '-'}</div>
-               )}
-             </div>
-             <div className="ditail_2">
-               <ul>
-                 <li>
-                   <span>혼잡상태</span>
-                   <div className={`congestion-dot ${congestionStatus?.[congestion]?.className || ''}`}></div>
-                   <span>{getCongestionInfo(congestion).text}</span>
-                 </li>
-                 <li><span>소음</span><span>{noise != null ? `Lv${noise}` : '-'}</span></li>
-                 <li>
-                   <span>좌석</span>
-                   {seat && typeof seat === 'object'
-                     ? Object.entries(seat).map(([size, count]) => (
-                         <span key={size}>{size}인석 {count}개 </span>
-                       ))
-                     : <span>-</span>}
-                 </li>
-                 <li><span>Wi-Fi</span><span>{getWifiInfo(wifi).text}</span></li>
-               </ul>
-             </div>
-           </div>
+          <div className="info">
+            <div className="ditail_1">
+              <div className="rate_con">
+                {renderStars(rate)} <span>&nbsp;{rate} &nbsp;&nbsp;|</span>
+              </div>
 
-           <button className="find-route-button" onClick={handleFindRoute}>
-             길찾기
-           </button>
-         </>
-       ) : (
-         <CafePhotoInline
-           title={placeTitle}
-           onBack={() => setView('detail')}
-         />
-       )}
-      </div>
+              {(open_hour || close_hour) && (
+                <div className="hour">
+                  {open_hour ?? '-'}~{close_hour ?? '-'}
+                </div>
+              )}
+            </div>
+
+            <img id="ui_bar" src={bar} alt="" />
+
+            <div className="ditail_2">
+              <div className="element">
+                <div className="sub-element">
+                  <img src={congIcon} alt="혼잡" />
+                  <span>혼잡상태</span>
+                </div>
+                <div className="cong">
+                <div className={`congestion-dot ${congestionStatus?.[congestion]?.className || ''}`} />
+                <span>{getCongestionInfo(congestion).text}</span>
+                </div>
+              </div>
+
+              <div className="element">
+                <div className="sub-element">
+                  <img src={noiseIcon} alt="소음" />
+                  <span>소음</span>
+                  </div>
+
+                  <div className="noise">
+                  <span>{noise != null ? `Lv${noise}` : '-'}</span>
+                  <div className="level">(Lv1 ~ Lv5)</div>
+                  </div>
+
+                
+                
+              </div>
+
+              <div className="element">
+                <div className="sub-element">
+                  <img src={seatsIcon} alt="좌석" />
+                  <span>좌석</span>
+                </div>
+
+                <div className="seats">
+                {seat && typeof seat === 'object'
+                  ? Object.entries(seat).map(([size, count]) => (
+                      <span key={size}>{size}인석 {count}개 </span>
+                    ))
+                  : <span>-</span>}
+
+                  </div>
+              </div>
+
+              <div className="element">
+                <div className="sub-element">
+                  <img src={wifiIcon} alt="Wi-Fi" />
+                  <span>Wi-Fi</span>
+                </div>
+                <span>{getWifiInfo(wifi).text}</span>
+              </div>
+            </div>
+          </div>
+
+          <button className="find-route-button" onClick={handleFindRoute}>
+            카공 명당 찾기
+            <img src={routeIcon} alt="" />
+          </button>
+        </>
+      ) : (
+        <CafePhotoInline
+          title={placeTitle}
+          onBack={() => setView('detail')}
+        />
+      )}
     </div>
-  );
+  </div>
+);
+
 }

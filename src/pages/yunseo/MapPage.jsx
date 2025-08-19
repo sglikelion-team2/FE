@@ -14,6 +14,7 @@ import { topCafes } from '../../mocks/cafe-data';
 import img0 from '../../assets/c_0.png';
 import img1 from '../../assets/c_1.png';
 import img2 from '../../assets/c_2.png';
+import img3 from '../../assets/c_3.png';
 
 import marker from '../../assets/marker.png';
 import "./markerDetail.css"
@@ -74,7 +75,7 @@ export default function MapPage() {
     0: img0,
     1: img1,
     2: img2,
-    3: "https://www.freeiconspng.com/uploads/star-icon-9.png"
+    3: img3
   };
 
   const mapRef = useRef(null);
@@ -84,6 +85,37 @@ export default function MapPage() {
   const [findRouteInfo, setFindRouteInfo] = useState(null); 
   const [currentLocation, setCurrentLocation] = useState(null);
   const routePolyline = useRef(null);
+
+
+  ////////네비게이션 구현
+  const userMarkerRef = useRef(null);    // ✅ 유저 마커를 직접 이동시키기 위함
+
+
+  // ✅ 내비게이션(스냅/축소 렌더)용 상태
+  const routeLatLngsRef = useRef([]);    // [{lat,lng}, ...] (경로 원본)
+  const routeCumDistRef = useRef([]);    // [누적(m), ...]
+  const routeEndRef = useRef(null);      // {lat,lng}
+  const pointsTmapRef = useRef([]);      // [Tmapv2.LatLng, ...]
+  const watchIdRef = useRef(null);
+  const lastIdxRef = useRef(0);          // 마지막 스냅 인덱스
+  const navActiveRef = useRef(false);
+  const arrivalAlertedRef = useRef(false);
+  /////////
+
+  // 🔎 디버깅 HUD용
+  const [navDebug, setNavDebug] = useState({
+    active: false,
+    secure: typeof window !== 'undefined' ? window.isSecureContext : null,
+    hasGeo: typeof navigator !== 'undefined' && 'geolocation' in navigator,
+    watchAlive: false,
+    routePts: 0,
+    lastIdx: 0,
+    idx: 0,
+    dToEnd: null,
+    lat: null,
+    lng: null,
+    ts: null,
+  });
 
 const geoPromiseRef = useRef(null);
 
@@ -124,9 +156,22 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         Accept: "application/json",
       },
     });
+    console.log(res);
 
-    const totalDistance = res.data.features[0].properties.totalDistance;
-    const totalTime = res.data.features[0].properties.totalTime;
+    // const totalDistance = res.data.features[0].properties.totalDistance;
+    // const totalTime = res.data.features[0].properties.totalTime;
+
+
+    // ✅ SP(Point)에서 totalDistance/totalTime 가져오되, 방어적으로 처리
+    const feats = res.data?.features ?? [];
+    const sp = feats.find(f => f?.geometry?.type === 'Point' && f?.properties?.pointType === 'SP')
+              || feats.find(f => f?.properties?.totalDistance != null);
+    const totalDistance = sp?.properties?.totalDistance;
+    const totalTime     = sp?.properties?.totalTime;
+
+
+    ////
+
     const routePoints = res.data.features
       .filter(f => f.geometry?.type === "LineString")
       .flatMap(f => f.geometry.coordinates);
@@ -150,8 +195,158 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
 };
 
 
+
+  // ======================
+  // 🔧 거리/스냅 유틸
+  // ======================
+  function haversine(a, b) {
+    const R = 6371000;
+    const toRad = d => d * Math.PI/180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const s = 2 * Math.asin(Math.sqrt(
+      Math.sin(dLat/2)**2 +
+      Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng/2)**2
+    ));
+    return R * s;
+  }
+
+  function preprocessRoute(routeLngLatArray) {
+    // routeLngLatArray: [[lng,lat], ...]
+    const arr = routeLngLatArray.map(([lng,lat]) => ({lat, lng}));
+    routeLatLngsRef.current = arr;
+    // 누적 거리
+    const cum = new Array(arr.length).fill(0);
+    for (let i=1; i<arr.length; i++) {
+      cum[i] = cum[i-1] + haversine(arr[i-1], arr[i]);
+    }
+    routeCumDistRef.current = cum;
+    // Tmap LatLng 캐시
+    pointsTmapRef.current = arr.map(p => new window.Tmapv2.LatLng(p.lat, p.lng));
+    lastIdxRef.current = 0;
+    console.log('[NAV] preprocessRoute: len=', arr.length, 'total(m)=', routeCumDistRef.current.at(-1));
+    setNavDebug(d => ({ ...d, routePts: arr.length, lastIdx: 0, idx: 0 }));
+  }
+
+  function snapIndex(pos, lookAhead = 30) {
+    // 간단: 최근 인덱스 근처에서 가장 가까운 버텍스에 스냅
+    const pts = routeLatLngsRef.current;
+    if (!pts.length) return 0;
+    let best = lastIdxRef.current;
+    let bestD = Infinity;
+    const start = lastIdxRef.current;
+    const end = Math.min(pts.length - 1, start + lookAhead);
+    for (let i=start; i<=end; i++) {
+      const d = haversine(pos, pts[i]);
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    return best;
+  }
+
+  function rebuildRemainingPolyline(fromIdx) {
+    const sliced = pointsTmapRef.current.slice(Math.max(0, fromIdx));
+    if (sliced.length < 2) return;
+    // setPath 지원 여부가 불확실하므로 안전하게 재생성
+    if (routePolyline.current) {
+      routePolyline.current.setMap(null);
+      routePolyline.current = null;
+    }
+    routePolyline.current = new window.Tmapv2.Polyline({
+      path: sliced,
+      strokeColor: "#3478F6",
+      strokeWeight: 6,
+      map: mapInstance.current,
+    });
+  }
+
+  function stopNavigation() {
+    if (watchIdRef.current != null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+    navActiveRef.current = false;
+  }
+
+  function startNavigation() {
+    if (navActiveRef.current || !routeLatLngsRef.current.length) return;
+    navActiveRef.current = true;
+    arrivalAlertedRef.current = false;
+    console.log('[NAV] startNavigation, secure=', window.isSecureContext, 'geo=', 'geolocation' in navigator);
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      ({ coords }) => {
+        const raw = { lat: coords.latitude, lng: coords.longitude };
+
+         // 디버깅용 현재 좌표/시간 업데이트
+        setNavDebug(d => ({ ...d, watchAlive: true, lat: raw.lat, lng: raw.lng, ts: Date.now() }));
+        // 최초 한번 콘솔에 권한/정확도 출력
+        if (!navDebug.active) {
+          console.log('[NAV] pos', raw, 'acc=', coords.accuracy, 'speed=', coords.speed, 'heading=', coords.heading);
+        }
+
+
+        // 최근 인덱스 근처 스냅
+        const idx = snapIndex(raw, 40);
+        if (idx > lastIdxRef.current) {
+          lastIdxRef.current = idx;
+          console.log('[NAV] snap idx advanced →', idx);
+
+
+          // 폴리라인을 앞에서부터 줄이기
+          rebuildRemainingPolyline(idx);
+          // 남은 거리/시간 갱신
+          const total = routeCumDistRef.current.at(-1) || 0;
+          const traveled = routeCumDistRef.current[idx] || 0;
+          const remaining = Math.max(0, total - traveled); // m
+          setFindRouteInfo(prev => {
+            if (!prev) return prev;
+            const estMin = prev.time ? Math.max(1, Math.round(prev.time * (remaining / total))) : null;
+            return {
+              ...prev,
+              distance: (remaining / 1000).toFixed(1), // km
+              time: estMin
+            };
+          });
+          setNavDebug(d => ({ ...d, lastIdx: idx, idx }));
+
+        }else {
+          // 인덱스가 안 올라갈 때도 로그 한 번씩
+          // (경로점 간격이 넓거나, 경로에서 멀어졌거나, GPS가 정지상태일 수 있음)
+          console.debug('[NAV] idx not advanced. current=', idx, 'last=', lastIdxRef.current);
+         }
+
+
+        // 유저 마커(스냅 위치) 이동
+        if (userMarkerRef.current) {
+          userMarkerRef.current.setPosition(new window.Tmapv2.LatLng(
+            routeLatLngsRef.current[lastIdxRef.current].lat,
+            routeLatLngsRef.current[lastIdxRef.current].lng
+          ));
+        }        // 도착 판정(15m, 1회 알림)
+        const dest = routeEndRef.current;
+        if (dest && !arrivalAlertedRef.current) {
+          const dToEnd = haversine(routeLatLngsRef.current[lastIdxRef.current], dest);
+          setNavDebug(d => ({ ...d, dToEnd: Math.round(dToEnd) }));
+          if (dToEnd <= 15) {
+            arrivalAlertedRef.current = true;
+            alert("도착했습니다.");
+            console.log('[NAV] ARRIVED <= 15m');
+          }
+        }
+      },
+      (err) => {
+        console.warn('watchPosition error:', err);
+        setNavDebug(d => ({ ...d, watchAlive: false }));
+      },
+      { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+    );
+  }
+
+
   const drawRoute = (routeData, startCoords, endCoords, totalDistance, totalTime, placeTitle) => {
     if (!mapInstance.current || !routeData || routeData.length === 0) return;
+    console.log('[NAV] drawRoute called. route pts=', routeData.length);
+
 
     // 기존 폴리라인 제거
     if (routePolyline.current) {
@@ -184,10 +379,33 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
       time: Number.isFinite(timeNum) ? Math.round(timeNum) : null,     // 분
       title: placeTitle ?? selectedMarker?.title ?? null    
     });
+
+    // ✅ 내비게이션 준비 및 시작 (스냅/축소 렌더)
+    preprocessRoute(routeData);     // [[lng,lat], ...] → refs 세팅
+    routeEndRef.current = endCoords;
+    startNavigation();
   };
 
   // ✅ 전체 초기화 + 재-Init 트리거
   const resetAll = useCallback(() => {
+        // 내비게이션 중지
+    stopNavigation();
+    arrivalAlertedRef.current = false;
+    routeLatLngsRef.current = [];
+    routeCumDistRef.current = [];
+    routeEndRef.current = null;
+    pointsTmapRef.current = [];
+    lastIdxRef.current = 0;
+
+
+
+
+
+
+
+
+
+
     // 폴리라인 제거
     if (routePolyline.current) {
       routePolyline.current.setMap(null);
@@ -245,9 +463,13 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
           const userMarker = new window.Tmapv2.Marker({
             position: pos,
             icon: userMarkerIconUrl,
-            iconSize: new window.Tmapv2.Size(16, 16),
+            iconSize: new window.Tmapv2.Size(30, 30),
             map: mapInstance.current,
           });
+
+          userMarkerRef.current = userMarker; // ✅ 저장해서 이후 이동에 사용
+          console.log('[INIT] user marker placed at', userLocation);
+
           markersRef.current.push(userMarker);
           bounds.extend(pos); 
           map.setCenter(pos);
@@ -258,6 +480,8 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
 
         // 카페 마커들
         for (const m of places) {
+
+
           const pos = new window.Tmapv2.LatLng(m.lat, m.lng);
           let markerIconUrl;
           if (m.cong === 0) markerIconUrl = ICON_URLS[0];
@@ -268,7 +492,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
           const placeMarker = new window.Tmapv2.Marker({
             position: pos,
             icon: markerIconUrl,
-            iconSize: new window.Tmapv2.Size(24, 24),
+            iconSize: new window.Tmapv2.Size(22, 30),
             map
           });
 
@@ -277,8 +501,8 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
             const starIcon = new window.Tmapv2.Marker({
               position: pos,
               icon: ICON_URLS[3],
-              iconSize: new window.Tmapv2.Size(24, 24),
-              map,
+              iconSize: new window.Tmapv2.Size(22, 30),
+              map
             });
             starIcon.markerData = { ...m, coords: { lat: m.lat, lng: m.lng } };
             starIcon.addListener("click", async () => {
@@ -326,6 +550,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
     init();
 
     return () => {
+      stopNavigation();
       if (routePolyline.current) routePolyline.current.setMap(null);
       markersRef.current.forEach(m => m.setMap(null));
       markersRef.current = [];
@@ -334,9 +559,31 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
   // ✅ reloadKey 변경 시 재-Init
   }, [reloadKey]);
 
+
+
+    // 🔎 간단 HUD: 화면에서 상태 확인
+  const hudStyle = {
+    position: 'absolute', right: 8, top: 8, zIndex: 99999,
+    background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '8px 10px',
+    borderRadius: 8, fontSize: 12, lineHeight: 1.35, maxWidth: 260
+  };
   return (
     <div className="map-page-container">
       <div ref={mapRef} id="map_div" style={{ width: "100%", height: "100%" }} />
+      <div style={hudStyle}>
+       <div><b>NAV DEBUG</b></div>
+        <div>secure: {String(navDebug.secure)} / geo: {String(navDebug.hasGeo)}</div>
+        <div>watchAlive: {String(navDebug.watchAlive)}</div>
+       <div>route pts: {navDebug.routePts}</div>
+       <div>idx: {navDebug.idx} / last: {navDebug.lastIdx}</div>
+        <div>dToEnd: {navDebug.dToEnd ?? '-' } m</div>
+        <div>pos: {navDebug.lat?.toFixed?.(5)}, {navDebug.lng?.toFixed?.(5)}</div>
+        <div>ts: {navDebug.ts ? new Date(navDebug.ts).toLocaleTimeString() : '-'}</div>
+      </div>
+
+
+
+
       {/* ✅ 조건부 렌더링: 하나의 컴포넌트만 보이도록 */}
       {!selectedMarker && !findRouteInfo && (
         <TopCafesSheet
