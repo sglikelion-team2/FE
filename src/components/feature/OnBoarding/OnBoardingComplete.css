@@ -1,47 +1,89 @@
 /* OnBoardingComplete.css */
-
-.complete-container {
+.onboarding-container {
   display: flex;
-  flex-direction: column; /* 아이템을 세로로 배치 */
-  justify-content: space-between; /* 위아래 공간을 최대로 분배 */
-  align-items: center; /* 가로 중앙 정렬 */
-  width: 100%;
+  flex-direction: column;
   height: 100%;
-  padding: 40px 25px;
+  padding: 20px 30px 40px 30px;
   box-sizing: border-box;
-  background-color: #ffffff;
 }
 
-.complete-content {
+.progress-bar {   display: flex;
+  gap: 5px;
+  margin-bottom: 40px;}
+.progress-step {   flex: 1;
+  height: 4px;
+  background-color: #f0f0f0;
+  border-radius: 2px; }
+.progress-step.active {   background-color: #333;}
+
+.onboarding-content-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-top: 20vh; /* 화면 상단에서 좀 더 떨어지도록 */
+  flex-grow: 1;
+  justify-content: center;
 }
 
-.complete-icon {
-  font-size: 48px;
-  margin-bottom: 24px;
+/* --- 로딩 상태 --- */
+.sparkle-icon {
+  width: 32px; /* 피그마에서 확인 필요 */
+  height: 32px;
+  margin-bottom: 15px;
 }
-
-.complete-message {
+.loading .status-title { /* 로딩 상태의 제목 스타일 */
   font-size: 20px;
-  line-height: 1.6; /* 줄 간격 */
   font-weight: bold;
-  color: #333;
+  line-height: 1.5;
+  margin-bottom: 40px;
+}
+.loading-state-image {
+  /* ✅ Figma에서 전달받은 크기 적용 */
+  width: 259px;
+  height: 200px;
+  object-fit: contain;
 }
 
-.map-button {
+/* --- 완료 상태 --- */
+.complete .status-icon { /* 완료 상태의 체크마크 아이콘 */
+  width: 48px;
+  height: 48px;
+  margin-bottom: 20px;
+}
+/* ✅ 완료 화면의 제목에만 특정 폰트 적용 */
+.complete .status-title {
+  font-family: '12LotteMartDreamBold', sans-serif;
+  font-weight: 600; 
+  font-size: 30px;
+  line-height: 1.4; /* 140% */
+  letter-spacing: -0.012em; /* -1.2% */
+}
+.status-subtitle {
+  font-size: 15px;
+  color: #363636;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+
+/* --- 하단 버튼 --- */
+.onboarding-footer {
   width: 100%;
-  padding: 15px;
-  background-color: #e6b823;
-  color: white;
+  margin-top: auto; 
+}
+.bottom-button {
+  width: 100%;
+  height: 60px;
+  background: none;
   border: none;
-  border-radius: 8px;
+  padding: 0;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  /* margin-top: auto; 를 사용해 버튼을 아래로 밀어낼 수도 있습니다. */
-  /* 여기서는 justify-content: space-between; 으로 처리했습니다. */
+}
+.bottom-button:disabled {
+  cursor: not-allowed;
+}
+.bottom-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
