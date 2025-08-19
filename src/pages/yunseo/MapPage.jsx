@@ -5,7 +5,8 @@ import TopCafesSheet from '../../components/feature/map/TopCafesSheet';
 import MarkerDetail from "./markerDetail";
 import axios from "axios";
 
-import FindRoute from './FindRoute';
+
+import FindRoute from './FindRoute.jsx';
 
 import { placeData } from './pinPlace';
 import { topCafes } from '../../mocks/cafe-data';
@@ -43,6 +44,8 @@ export default function MapPage() {
   const [isQuestModalOpen, setIsQuestModalOpen] = useState(false);
   const [reloadKey, setReloadKey] = useState(0); // ✅ 초기화 후 재-Init 용 키
   const navigate = useNavigate();
+
+  
 
   const handleArrivalClick = () => {
     setIsQuestModalOpen(true);
@@ -82,75 +85,70 @@ export default function MapPage() {
   const [currentLocation, setCurrentLocation] = useState(null);
   const routePolyline = useRef(null);
 
-  const getCurrentLocation = () => {
-    return new Promise((resolve, reject) => {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            resolve({ lat: latitude, lng: longitude });
-          },
-          (error) => {
-            console.error("현 위치를 가져오는 데 실패했습니다:", error);
-            reject(error);
-          },
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
-      } else {
-        reject(new Error("Geolocation API가 지원되지 않습니다."));
-      }
+const geoPromiseRef = useRef(null);
+
+const getCurrentLocationOnce = () => {
+  if (geoPromiseRef.current) return geoPromiseRef.current; // 진행 중/완료된 것 재사용
+  geoPromiseRef.current = new Promise((resolve, reject) => {
+    if (!("geolocation" in navigator)) return reject(new Error("Geolocation 미지원"));
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => resolve({ lat: coords.latitude, lng: coords.longitude }),
+      (err) => reject(err),
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+  });
+  return geoPromiseRef.current;
+};
+
+const alertedRef = useRef(false);
+
+const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
+  try {
+    const startCoords = currentLocation || await getCurrentLocationOnce();
+    setCurrentLocation(startCoords);
+
+    const { lat: endY, lng: endX } = destinationCoords;
+    const { lat: startY, lng: startX } = startCoords;
+
+    const url = "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json";
+    const payload = {
+      startX, startY, endX, endY,
+      reqCoordType: "WGS84GEO", resCoordType: "WGS84GEO",
+      startName: "현 위치", endName: "도착지",
+    };
+
+    const res = await axios.post(url, payload, {
+      headers: {
+        appKey: (APP_KEY || "").trim(),
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     });
-  };
 
-  const getRouteInfo = async (destinationCoords) => {
-    try {
-      const startCoords = currentLocation || await getCurrentLocation();
-      setCurrentLocation(startCoords);
-      
-      const { lat: endY, lng: endX } = destinationCoords;
-      const { lat: startY, lng: startX } = startCoords;
+    const totalDistance = res.data.features[0].properties.totalDistance;
+    const totalTime = res.data.features[0].properties.totalTime;
+    const routePoints = res.data.features
+      .filter(f => f.geometry?.type === "LineString")
+      .flatMap(f => f.geometry.coordinates);
 
-      const url =
-        "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json";
-      const payload = {
-        startX,
-        startY,
-        endX,
-        endY,
-        reqCoordType: "WGS84GEO",
-        resCoordType: "WGS84GEO",
-        startName: "현 위치",
-        endName: "도착지",
-      };
-
-      const res = await axios.post(url, payload, {
-        headers: {
-          appKey: (APP_KEY || "").trim(),
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-
-      const totalDistance = res.data.features[0].properties.totalDistance; // meters
-      const totalTime = res.data.features[0].properties.totalTime;         // seconds
-      const routePoints = res.data.features
-        .filter(f => f.geometry?.type === "LineString")
-        .flatMap(f => f.geometry.coordinates);
-
-      return {
-        distance: (totalDistance / 1000).toFixed(1), // string "x.x"
-        time: (totalTime / 60).toFixed(0),          // string "mm"
-        routeData: routePoints,
-        startCoords,
-        endCoords: destinationCoords
-      };
-
-    } catch (err) {
-      console.error("길찾기 정보 가져오기 실패:", err);
-      alert("길찾기 정보를 가져오는 데 실패했습니다.");
-      return null;
+    return {
+      distance: (totalDistance / 1000).toFixed(1),
+      time: (totalTime / 60).toFixed(0),
+      routeData: routePoints,
+      startCoords,
+      endCoords: destinationCoords
+    };
+  } catch (err) {
+    console.warn("길찾기 실패:", err?.response?.data || err?.message || err);
+    if (!silent && !alertedRef.current) {
+      alertedRef.current = true;
+      alert("길찾기 경로를 찾을 수 없습니다. 잠시 후 다시 시도해 주세요.");
+      setTimeout(() => { alertedRef.current = false; }, 3000); // 3초 뒤 알림 해제(중복 방지)
     }
-  };
+    return null;
+  }
+};
+
 
   const drawRoute = (routeData, startCoords, endCoords, totalDistance, totalTime, placeTitle) => {
     if (!mapInstance.current || !routeData || routeData.length === 0) return;
@@ -241,7 +239,7 @@ export default function MapPage() {
 
         // 사용자 위치 마커
         try {
-          const userLocation = await getCurrentLocation();
+          const userLocation = await getCurrentLocationOnce();
           const pos = new window.Tmapv2.LatLng(userLocation.lat, userLocation.lng);
           const userMarkerIconUrl = `${marker}`;
           const userMarker = new window.Tmapv2.Marker({
@@ -344,7 +342,7 @@ export default function MapPage() {
         <TopCafesSheet
           topCafesWithDistance={topCafesWithDistance}
           onFindRoute={drawRoute}
-          getCurrentLocation={getCurrentLocation}
+          getCurrentLocation={getCurrentLocationOnce}
           getRouteInfo={getRouteInfo}
           setSelectedMarker={setSelectedMarker}
         />

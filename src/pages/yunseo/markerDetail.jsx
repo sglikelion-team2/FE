@@ -9,6 +9,8 @@ import cong1 from "../../assets/c_1.png";
 import cong2 from "../../assets/c_2.png";
 
 
+import { CafePhotoInline } from './CafePhoto.jsx'; // ✅ 추가
+
 
 
 
@@ -16,6 +18,8 @@ import cong2 from "../../assets/c_2.png";
 export default function MarkerDetail({ markerInfo, onClose, onFindRoute }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const nav = useNavigate();
+
+  const [view, setView] = useState('detail'); ///사진 더보기를 위해 추가
 
     const congestionStatus = {
     0: { text: "여유", className: "status-green" },
@@ -38,7 +42,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute }) {
   /// 그 이후 데이터 파싱부분
   const rate = cafe_info[0].result.pin[0].rate;
   const open_hour = cafe_info[0].result.pin[0].open_hour;
-  const close_hour = cafe_info[0].result.pin[0].close_hout;
+  const close_hour = cafe_info[0].result.pin[0].close_hour;
 
   const cong = cafe_info[0].result.pin[0].congestion;
   const noise = cafe_info[0].result.pin[0].noise;
@@ -120,70 +124,79 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute }) {
 
   //////네비게이션 
   
-
-  return (
-    <div
-      className={`sheet-container ${isExpanded ? 'expanded' : ''}`}
-      style={{ zIndex: 9999, height: '600px' }}
-    >
+return(
+    <div className={`sheet-container ${isExpanded ? 'expanded' : ''}`} style={{ zIndex: 9999, height: '600px' }}>
       <div className="sheet-header" onClick={toggleSheet}>
         <div className="grabber"></div>
         <button className="close-button" onClick={onClose}>X</button>
       </div>
 
       <div className="sheet-content">
+        {/* ⬇️ 상단 정보는 항상 고정(장소명 유지) */}
         <div className="header">
           <h2>{title}</h2>
           <p>{distance}m, {time}분</p>
         </div>
 
-        <div className="img_con">
-          <img src={img1} alt="" width="10px"/>
-          <div className="imgs">
-            <img src={img2} alt="" width="10px"/>
-            <img src={img2} alt="" width="100px" onClick={()=> nav('/cafe-photo', {state:{title:title}})} />
-          </div>
-        </div>
-
-        <div className="info">
-          <div className="ditail_1">
-            <div className="rate_con">
-              <span>{renderStars(rate)}</span>
+        {/* ⬇️ 이 아래 본문만 스왑 */}
+        {view === 'detail' ? (
+          <>
+            <div className="img_con">
+              <img src={img1} alt="" width="10px" />
+              <div className="imgs">
+                <img src={img2} alt="" width="10px" />
+                <img
+                  src={img2}
+                  alt=""
+                  width="100px"
+                  onClick={() => setView('photos')}   // 사진 보기로 전환
+                  style={{ cursor: 'pointer' }}
+                />
+              </div>
             </div>
-            <div className="hour">영업시간 {open_hour}~{close_hour}</div>
-          </div>
 
-          <div className="ditail_2">
-            <ul>
-              <li>
-                <span>혼잡상태</span>
-                {/* ⭐️ 이 부분이 수정된 코드입니다. */}
-                <div className={`congestion-dot ${congestionStatus[cong].className}`}></div>
-                <span>{getCongestionInfo(cong).text}</span>
-              </li>
-              <li>
-                <span>소음</span>
-                <span>Lv{noise}</span>
-              </li>
-              <li>
-                <span>좌석</span>
-                {Object.entries(seat).map(([size, count]) => (
-                  <span key={size}>{size}인석 {count}개 </span>
-                ))}
-              </li>
-              <li>
-                <span>Wi-Fi</span>
-                <span>{getWifiInfo(wifi).text}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <button 
-          className="find-route-button"
-          onClick={onFindRoute}>
-          길찾기
-        </button>
+            <div className="info">
+              <div className="ditail_1">
+                <div className="rate_con">
+                  <span>{renderStars(rate)}</span>
+                </div>
+                <div className="hour">영업시간 {open_hour}~{close_hour}</div>
+              </div>
+
+              <div className="ditail_2">
+                <ul>
+                  <li>
+                    <span>혼잡상태</span>
+                    <div className={`congestion-dot ${congestionStatus[cong]?.className || ''}`}></div>
+                    <span>{getCongestionInfo(cong).text}</span>
+                  </li>
+                  <li>
+                    <span>소음</span>
+                    <span>Lv{noise}</span>
+                  </li>
+                  <li>
+                    <span>좌석</span>
+                    {Object.entries(seat).map(([size, count]) => (
+                      <span key={size}>{size}인석 {count}개 </span>
+                    ))}
+                  </li>
+                  <li>
+                    <span>Wi-Fi</span>
+                    <span>{getWifiInfo(wifi).text}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <button className="find-route-button" onClick={onFindRoute}>길찾기</button>
+          </>
+        ) : (
+          // ⬇️ 사진 보기 (인라인)
+          <CafePhotoInline
+            title={title}
+            onBack={() => setView('detail')}  // 다시 상세로
+          />
+        )}
       </div>
     </div>
   );

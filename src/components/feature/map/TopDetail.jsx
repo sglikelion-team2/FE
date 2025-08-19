@@ -1,6 +1,7 @@
 // TopDetail.jsx
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import React, { useState } from 'react';
+import { CafePhotoInline } from '../../../pages/yunseo/CafePhoto.jsx';
 
 // 혼잡도 아이콘(필요 시 경로 그대로 사용)
 import cong0 from "../../../assets/c_0.png";
@@ -17,7 +18,8 @@ export default function TopDetail({
   onPrev,
   totalCafes
 }) {
-  const nav = useNavigate();
+   const [view, setView] = useState('detail');
+  
 
   if (!cafe) return null;
 
@@ -100,11 +102,7 @@ export default function TopDetail({
 
   return (
    <div className="topdetail-container">
-      <div className="controlBtns">
-        {/* 닫기/이전/다음 등 헤더 컨트롤은 기존 스타일에 맞춰 필요 시 추가 */}
-        {onPrev && <button className="nav-button prev" onClick={onPrev}>‹</button>}
-        {onNext && <button className="nav-button next" onClick={onNext}>›</button>}
-      </div>
+
 
       <div className="sheet-content">
         <div className="header">
@@ -115,60 +113,69 @@ export default function TopDetail({
           )}
         </div>
 
-        <div className="img_con">
-          {img_url && <img src={img_url} alt="" width="100px" />}
-          <div className="imgs">
-            {img_url && (
-              <img
-                src={img_url}
-                alt=""
-                width="100px"
-                onClick={() => nav('/cafe-photo', { state: { title: placeTitle } })}
-              />
-            )}
-          </div>
-        </div>
+       {/* ⬇ 본문만 스왑: 상세 ↔ 사진 */}
+       {view === 'detail' ? (
+         <>
+           <div className="img_con">
+             {img_url && <img src={img_url} alt="" width="100px" />}
+            <div className="imgs">
+               {img_url && (
+                 <img
+                   src={img_url}
+                   alt=""
+                   width="100px"
+                   onClick={() => setView('photos')}
+                   style={{ cursor: 'pointer' }}
+                 />
+               )}
+             </div>
+           </div>
 
-        <div className="info">
-          <div className="ditail_1">
-            <div className="rate_con">
-              <span>{renderStars(rate)}</span>
-            </div>
-            {(open_hour || close_hour) && (
-              <div className="hour">영업시간 {open_hour ?? '-'}~{close_hour ?? '-'}</div>
-            )}
-          </div>
+           <div className="info">
+                  <div className="controlBtns">
+        {/* 닫기/이전/다음 등 헤더 컨트롤은 기존 스타일에 맞춰 필요 시 추가 */}
+        {onPrev && <button className="nav-button prev" onClick={onPrev}>‹</button>}
+        {onNext && <button className="nav-button next" onClick={onNext}>›</button>}
+      </div>
+             <div className="ditail_1">
+               <div className="rate_con">
+                 <span>{renderStars(rate)}</span>
+               </div>
+               {(open_hour || close_hour) && (
+                 <div className="hour">영업시간 {open_hour ?? '-'}~{close_hour ?? '-'}</div>
+               )}
+             </div>
+             <div className="ditail_2">
+               <ul>
+                 <li>
+                   <span>혼잡상태</span>
+                   <div className={`congestion-dot ${congestionStatus?.[congestion]?.className || ''}`}></div>
+                   <span>{getCongestionInfo(congestion).text}</span>
+                 </li>
+                 <li><span>소음</span><span>{noise != null ? `Lv${noise}` : '-'}</span></li>
+                 <li>
+                   <span>좌석</span>
+                   {seat && typeof seat === 'object'
+                     ? Object.entries(seat).map(([size, count]) => (
+                         <span key={size}>{size}인석 {count}개 </span>
+                       ))
+                     : <span>-</span>}
+                 </li>
+                 <li><span>Wi-Fi</span><span>{getWifiInfo(wifi).text}</span></li>
+               </ul>
+             </div>
+           </div>
 
-          <div className="ditail_2">
-            <ul>
-              <li>
-                <span>혼잡상태</span>
-                <div className={`congestion-dot ${congestionStatus?.[congestion]?.className || ''}`}></div>
-                <span>{getCongestionInfo(congestion).text}</span>
-              </li>
-              <li>
-                <span>소음</span>
-                <span>{noise != null ? `Lv${noise}` : '-'}</span>
-              </li>
-              <li>
-                <span>좌석</span>
-                {seat && typeof seat === 'object'
-                  ? Object.entries(seat).map(([size, count]) => (
-                      <span key={size}>{size}인석 {count}개 </span>
-                    ))
-                  : <span>-</span>}
-              </li>
-              <li>
-                <span>Wi-Fi</span>
-                <span>{getWifiInfo(wifi).text}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <button className="find-route-button" onClick={handleFindRoute}>
-          길찾기
-        </button>
+           <button className="find-route-button" onClick={handleFindRoute}>
+             길찾기
+           </button>
+         </>
+       ) : (
+         <CafePhotoInline
+           title={placeTitle}
+           onBack={() => setView('detail')}
+         />
+       )}
       </div>
     </div>
   );
