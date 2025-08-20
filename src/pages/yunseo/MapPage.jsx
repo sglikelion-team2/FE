@@ -645,7 +645,14 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
       )}
 
       {isQuestModalOpen && (
-        <QuestArrival title={findRouteInfo?.title || '도착지'} />
+        <QuestArrival 
+                  title={findRouteInfo?.title || '도착지'} 
+          // 팝업을 닫는 함수를 onDecline이라는 이름으로 전달
+          onDecline={() => {
+            setIsQuestModalOpen(false); // 팝업 상태를 false로 바꿔 닫기
+            resetAll();
+            navigate('/map'); // URL도 변경
+          }} />
       )}
     </div>
   );
