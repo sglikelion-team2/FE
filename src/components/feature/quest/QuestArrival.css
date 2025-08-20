@@ -1,5 +1,7 @@
 /* feature/quest/QuestArrival.css */
-
+*{
+  z-index: 9999; /* 기본적으로 높은 z-index 설정 */
+}
 .arrival-backdrop {
   position: fixed;
   top: 0;

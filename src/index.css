@@ -13,9 +13,3 @@ code {
 }
 
 
-@font-face {
-    font-family: '12LotteMartDreamBold';
-    src: url('./assets/fonts/12LotteMartDreamBold.ttf') format('truetype'); /* 폰트 파일 경로 */
-    font-weight: normal;
-    font-style: normal;
-}

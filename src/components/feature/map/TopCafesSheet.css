@@ -28,10 +28,10 @@
 .sheet-container {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  background: #fff;
+  
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  box-shadow: 0 -5px 20px rgba(0,0,0,.1);
+  
   transition: transform .35s ease-in-out;
   transform: translateY(calc(100% - 120px)); /* 기본적으로 바 아래에 위치 */
   z-index: 500;
@@ -39,9 +39,11 @@
   flex-direction: column;
   align-items: center;
   height: auto;  /* 높이를 자동으로 계산 */
-  max-height: 85vh;  /* 최대 높이를 85%로 설정 */
+  max-height: 770px;  /* 최대 높이를 85%로 설정 */
   overflow: hidden; /* 내용이 넘칠 경우 스크롤을 적용 */
   padding: 0 29px;
+    background: linear-gradient(180deg, var(--Color, rgba(255, 255, 255, 0.50)) 40%, rgba(96, 165, 250, 0.50) 100%), var(--Color, #FFF);
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.40);
 }
 
 /* 'expanded' 클래스가 적용된 경우 바가 올라가면서 화면 표시 */
@@ -118,7 +120,7 @@
 
 /* 카페 리스트 영역 */
 .cafe-list {
-  background-color: #e6b823;
+  
 
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* 아이폰 하단 안전 영역 여백 */

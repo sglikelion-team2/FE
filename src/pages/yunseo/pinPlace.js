@@ -16,8 +16,8 @@ export const placeData = {
       },
       {
         "pinname": "투썸플레이스 신촌연대점",//
-        "lat": 37.5601,
-        "lng": 126.9419,
+        "lat": 37.549937,
+        "lng": 126.936612,
         "congestion": 1,
         "rank": 2
       },

@@ -4,7 +4,7 @@ import SplashScreen from '../components/feature/OnBoarding/SplashScreen'; // 새
 import Nickname from '../components/feature/OnBoarding/Nickname'; // 기존 닉네임 컴포넌트
 
 import UserPreferences from '../components/feature/OnBoarding/UserPreferences'; 
-import OnBoardingComplete from '../components/feature/OnBoarding/OnBoardingComplete'; 
+import OnBoardingComplete from '../components/feature/OnBoarding/OnBoardingcomplete'; 
 import Quest from '../pages/sorin/Quest';
 // import CafeDetail from '../pages/yunseo/CafeDetail';
 import MapPage from '../pages/yunseo/MapPage';

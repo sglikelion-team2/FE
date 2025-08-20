@@ -209,8 +209,8 @@ return (
                   src={img_url}
                   alt=""
                   width="100%"
-                  onClick={() => setView('photos')}
-                  style={{ cursor: 'pointer' }}
+                 
+                  
                 />
               )}
               <div

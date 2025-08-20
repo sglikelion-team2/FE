@@ -5,8 +5,10 @@ import TopCafesSheet from '../../components/feature/map/TopCafesSheet';
 import MarkerDetail from "./markerDetail";
 import axios from "axios";
 
+import Arrived from './Arrived.jsx';  
 
-import FindRoute from './FindRoute.jsx';
+
+import FindRoute from './findRoute.jsx';
 
 import { placeData } from './pinPlace';
 import { topCafes } from '../../mocks/cafe-data';
@@ -45,6 +47,7 @@ export default function MapPage() {
   const [isQuestModalOpen, setIsQuestModalOpen] = useState(false);
   const [reloadKey, setReloadKey] = useState(0); // ✅ 초기화 후 재-Init 용 키
   const navigate = useNavigate();
+  const [arrivedOpen, setArrivedOpen] = useState(false); // ⬅ 추가
 
   
 
@@ -85,6 +88,10 @@ export default function MapPage() {
   const [findRouteInfo, setFindRouteInfo] = useState(null); 
   const [currentLocation, setCurrentLocation] = useState(null);
   const routePolyline = useRef(null);
+
+
+  //////
+
 
 
   ////////네비게이션 구현
@@ -177,7 +184,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
       .flatMap(f => f.geometry.coordinates);
 
     return {
-      distance: (totalDistance / 1000).toFixed(1),
+      distance: (totalDistance),
       time: (totalTime / 60).toFixed(0),
       routeData: routePoints,
       startCoords,
@@ -327,9 +334,10 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         if (dest && !arrivalAlertedRef.current) {
           const dToEnd = haversine(routeLatLngsRef.current[lastIdxRef.current], dest);
           setNavDebug(d => ({ ...d, dToEnd: Math.round(dToEnd) }));
-          if (dToEnd <= 15) {
+          if (dToEnd <= 50) {
             arrivalAlertedRef.current = true;
             alert("도착했습니다.");
+            setArrivedOpen(true); // ⬅ 팝업 열기
             console.log('[NAV] ARRIVED <= 15m');
           }
         }
@@ -422,6 +430,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
     setFindRouteInfo(null);
     setTopCafesWithDistance([]);
     setCurrentLocation(null);
+    setArrivedOpen(false); // ⬅ 추가
 
     // 맵 뷰 초기값(선택)
     if (mapInstance.current && window.Tmapv2) {
@@ -581,6 +590,17 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         <div>ts: {navDebug.ts ? new Date(navDebug.ts).toLocaleTimeString() : '-'}</div>
       </div>
 
+      {arrivedOpen && (
+      <Arrived
+        title={findRouteInfo?.title || '도착지'}
+        onClose={() => setArrivedOpen(false)}
+            onStartQuest={() => {
+     // 필요하면 Arrived를 닫고(선택), 최상위 모달을 켭니다.
+       setArrivedOpen(false);
+      setIsQuestModalOpen(true);}}
+      />
+    )}
+
 
 
 
@@ -625,7 +645,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
       )}
 
       {isQuestModalOpen && (
-        <QuestArrival onYes={handleQuestAccept} onNo={handleQuestDecline} />
+        <QuestArrival title={findRouteInfo?.title || '도착지'} />
       )}
     </div>
   );

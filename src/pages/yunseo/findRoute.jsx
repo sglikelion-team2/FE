@@ -36,7 +36,7 @@ export default function FindRoute({ findRouteInfo, onClose }) {
           </div>
           <div className="info-box">
             <span>총 거리:</span>
-            <strong>{distance} km</strong>
+            <strong>{distance} m</strong>
           </div>
           <div className="info-box">
             <span>예상 시간:</span>
