@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,useLocation} from 'react-router-dom';
 
 import Noise from '../../components/feature/quest/steps/Noise';
 import Wifi from '../../components/feature/quest/steps/Wifi';
@@ -16,7 +16,10 @@ const questKeys = Object.keys(questConfig);
 
 export default function Quest() {
   const navigate = useNavigate();
+  const location=useLocation();
   const [currentQuestKey, setCurrentQuestKey] = useState(null);
+
+  const storeTitle=location.state?.title||"매장이름";
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * questKeys.length);
@@ -68,7 +71,7 @@ export default function Quest() {
       return <div>퀘스트를 불러오는 중...</div>;
     }
     const QuestComponent = questConfig[currentQuestKey].component;
-    return <QuestComponent onComplete={handleQuestComplete} />;
+    return <QuestComponent onComplete={handleQuestComplete} title={storeTitle}/>;
   };
 
   return (
