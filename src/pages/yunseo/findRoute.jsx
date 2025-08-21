@@ -1,8 +1,8 @@
 // FindRoute.jsx
 import React from 'react';
-import './FindRoute.css';
+import './findRoute.css';
 
-import routeIcon from "../../assets/map/detail_info/routeIcon.svg";
+import routeIcon from "../../assets/map/route/Vector.svg";
 
 
 export default function FindRoute({ findRouteInfo, onClose }) {
@@ -30,10 +30,11 @@ export default function FindRoute({ findRouteInfo, onClose }) {
 
 
         <div className="route-summary">
+          
           <div className="info-box">
             <div className='route-name'>최단 거리 ✏️</div>
              <div className="time-box">
-              {time} min
+              {time} <span>min</span>
              </div>
 
           </div>

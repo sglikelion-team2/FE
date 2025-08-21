@@ -16,11 +16,24 @@
   padding: 19px 20px 20px 21px;
   box-sizing: border-box;
   z-index: 1000;
- 
+  font-family: "LotteMartDream";
+  
 }
 
 .routIcon-box{
   background-color: #44392B;
+  width:54px;
+  height: 54px;
+  border-radius: 27px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.route-summary{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .find-route-panel .close-button {
@@ -32,31 +45,61 @@
   font-size: 1.2rem;
   cursor: pointer;
   color: #888;
+  font-size: 15px;
+  
 }
 
-.find-route-panel .route-summary {
-  text-align: center;
-}
-
-.find-route-panel h2 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.find-route-panel .info-box {
+.img-box{
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  font-size: 1rem;
+  align-items: end;
+
 }
 
-.find-route-panel .info-box span {
-  color: #555;
+.close-button{
+  z-index: 9999999;
 }
 
-.find-route-panel .info-box strong {
+
+
+
+
+.route-name{
+  font-size: 16px;
+  letter-spacing: 0.232px;
+  line-height: 142.9%; /* 22.864px */
   color: #000;
-  font-weight: bold;
+  align-self: stretch;
 }
+
+.time-box{
+color: var(--color-pin-Route, #2563EB);
+/* Cheading-large-bold */
+
+font-size: 40px;
+font-style: normal;
+font-weight: 400;
+line-height: 133.4%; /* 53.36px */
+letter-spacing: -0.92px;
+}
+
+.time-box span{
+  color: #000;
+
+/* clabel-medium-regular */
+
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 142.9%; /* 22.864px */
+letter-spacing: 0.232px;
+}
+
+
+.panel-content{
+  display: flex;
+}
+
+
+
+
+

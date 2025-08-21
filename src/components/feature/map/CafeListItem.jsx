@@ -1,6 +1,8 @@
 import React from 'react';
 import './CafeListItem.css';
 
+import routeIcon from '../../../assets/map/detail_info/routeIcon.svg';
+
 const congestionStatus = {
   0: { text: "여유", className: "status-green" },
   1: { text: "보통", className: "status-orange" },
@@ -53,13 +55,61 @@ export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurre
   };
 
   return (
-    <div className="cafe-item-container" onClick={() => onCafeClick(cafe)}>
-      <img src={img_url} alt={pinname} className="cafe-image" />
+    <div className="cafe-item-container" >
+
+      <div className="sub-div1">
+        <div className="info1">
+        {pinname}&nbsp;&nbsp;
+        <span className="cafe-distance">{distance ? `${distance}m` : '거리 정보 없음'}</span>
+        </div>
+
+        <div className="info2">
+            <div className="congestion">
+            <div className="congestion-text">
+            {congestionStatus[congestion].text}
+            </div>
+            <div className={`congestion-dot ${congestionStatus[congestion].className}`}></div>
+            </div>
+          
+          
+
+          <div className="cafe-hashtags">
+          <span className="hashtag">{category}</span>
+          {wifi >= 4 && <span className="hashtag">#wifi 빵빵</span>}
+          </div>
+
+        
+        </div>
+
+        <div className="info3">
+          <button className='detail-button'onClick={() => onCafeClick(cafe)}>상세보기</button>
+          <button className="directions-button" onClick={handleFindRoute}>
+            길찾기
+            <img src={routeIcon} alt="" width="10px"/>
+          </button>
+
+
+        </div>
+
+      </div>
+
+      <div className="sub-div2">
+         <img src={img_url} alt={pinname} className="cafe-image" width="81px" />
+      </div>
+
+     
+
+
+      {/* <img src={img_url} alt={pinname} className="cafe-image" />
+
+
       <div className="cafe-details">
+
         <div className="cafe-info-header">
           <span className="cafe-name">{pinname}</span>
           <span className="cafe-rating">{renderStars(rate)}</span>
         </div>
+
         <div className="cafe-status-line">
           <span className={`operating-status ${isOperating ? 'open' : 'closed'}`}>
             {isOperating ? '영업중' : '영업종료'}
@@ -67,17 +117,27 @@ export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurre
           <span className="cafe-distance">{distance ? `${distance}Km | 도보 ${time}분` : '거리 정보 없음'}</span>
           <span className="cafe-address">{address}</span>
         </div>
+
         <div className="cafe-hashtags">
           <span className="hashtag">{category}</span>
           {wifi >= 4 && <span className="hashtag">#wifi 빵빵</span>}
         </div>
+
       </div>
+
+
+
       <div className="cafe-actions">
+        <div className="congestion">
+          {congestionStatus[congestion].text}
+        </div>
         <div className={`congestion-dot ${congestionStatus[congestion].className}`}></div>
-        <button className="directions-button" onClick={handleFindRoute}>
-          길찾기
-        </button>
-      </div>
+
+
+      </div> */}
+
+
+
     </div>
   );
 }
