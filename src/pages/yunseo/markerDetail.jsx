@@ -39,7 +39,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
    if (!title) return;
    const ctrl = new AbortController();
    const API_BASE =
-     import.meta.env.VITE_PROJECT_API // ← Vite는 VITE_ 프리픽스 필요
+     process.env.REACT_APP_PROJECT_API // ← Vite는 VITE_ 프리픽스 필요
      ?? import.meta.env.PROJECT_API   // (있다면) 백업
      ?? window.PROJECT_API;           // (있다면) 또 다른 백업
 
@@ -62,6 +62,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
        });
        if (!res.ok) throw new Error(`HTTP ${res.status}`);
        const data = await res.json();
+        console.log("카페데이터",data);
        setCafeInfo(data);
      } catch (e) {
        if (e.name !== 'AbortError') {
@@ -95,7 +96,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
   };
 
   // 데모 데이터(기존 구조 유지)
-  const pin = cafeInfo?.[0]?.result?.pin?.[0] ?? {};
+  const pin = cafeInfo?.result ?? {};
   const rate = pin.rate;
   const open_hour = pin.open_hour;
   const close_hour = pin.close_hour;

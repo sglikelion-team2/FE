@@ -93,7 +93,7 @@ export default function UserPreferences() {
     }
 
     try {
-      const API_URL = `${process.env.REACT_APP_PROJECT_API}/preferences`; // .env 파일의 주소 사용
+      const API_URL = `${process.env.REACT_APP_PROJECT_API}/login/{name}`; // .env 파일의 주소 사용
       
       const response = await fetch(API_URL, {
         method: 'POST',

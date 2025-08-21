@@ -23,7 +23,7 @@ import "./markerDetail.css"
 
 const APP_KEY =
   (typeof window !== "undefined" && (window.__TMAP_KEY__ || "")) ||
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_TMAP_KEY) ||
+  (typeof import.meta !== "undefined" && import.meta.env?.REACT_APP_TMAP_KEY) ||
   process.env.REACT_APP_TMAP_KEY ||
   "";
 
@@ -504,7 +504,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
           const storedNickname = localStorage.getItem('current_user') || '방문자';
           // 환경변수 기반 API 베이스 (필요 시 조정)
          const API_BASE =
-           import.meta.env.VITE_PROJECT_API ??
+           process.env.REACT_APP_PROJECT_API ??
             import.meta.env.PROJECT_API ??
             window.PROJECT_API ??
             "";
@@ -527,11 +527,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
                 // 'Accept': 'application/json',
                 // 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                name: storedNickname,
-                lat: userLocation.lat,
-                lng: userLocation.lng,
-              }),
+            
             });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
