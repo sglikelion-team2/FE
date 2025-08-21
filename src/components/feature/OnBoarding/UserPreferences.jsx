@@ -82,23 +82,39 @@ export default function UserPreferences() {
     };
   };
 
-  const handleFindClick = async () => {
+ const handleFindClick = async () => {
     const apiData = mapToApiData();
     console.log("API로 전송할 데이터:", apiData);
+    
+    // 필수값 체크 (API 명세에 따라 facility는 선택사항일 수 있음)
+    if (apiData.purpose === undefined || apiData.atmos === undefined) {
+      alert("방문 목적과 분위기를 모두 선택해주세요.");
+      return;
+    }
 
-    // API 호출 로직 (Mock)
     try {
-      const response = await savePreferences(apiData);
-      if (response.isSuccess) {
+      const API_URL = `${process.env.REACT_APP_PROJECT_API}/preferences`; // .env 파일의 주소 사용
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiData),
+      });
+
+      const data = await response.json();
+
+      if (data.isSuccess) {
         navigate("/complete");
       } else {
-        alert(response.message);
+        alert(data.message || '데이터 저장에 실패했습니다.');
       }
     } catch (error) {
+      console.error("선호도 저장 API 호출 중 에러 발생:", error);
       alert("요청 중 에러가 발생했습니다.");
     }
   };
-
   return (
     <div className="pref-container">
       <div className="pref-header">
