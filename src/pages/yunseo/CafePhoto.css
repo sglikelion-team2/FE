@@ -9,40 +9,36 @@ body {
   height: 100vh; /* 화면 전체 높이를 차지 */
   display: flex;
   flex-direction: column; /* 자식 요소들을 세로로 정렬 */
+  width: 100%;
+  
+  
 }
 
-.gallery-header {
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* ⭐️ 헤더를 상단에 고정 */
-  position: sticky;
-  top: 0;
-  background-color: white; /* 스크롤 시 뒤에 내용이 비치지 않도록 */
-  z-index: 1000; /* 다른 요소 위에 표시 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+.gallery-header{
+  margin:10px 0;
 }
 
-.back-button {
-  padding: 8px 15px;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+.image-grid{
+  object-fit: cover;
 }
 
-.back-button:hover {
-  background-color: #555;
-}
+
+
+
+
 
 /* ⭐️ 스크롤이 적용될 영역 */
 .image-grid-scrollable {
-  flex: 1; /* 남은 공간을 모두 차지 */
-  overflow-y: auto; /* 세로 스크롤을 가능하게 함 */
-  padding: 20px;
+   flex: 1;
+
+  overflow-y: auto;      /* 스크롤 동작 */
+  overflow-x: hidden;
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.image-grid-scrollable::-webkit-scrollbar { /* Chrome/Safari */
+  display: none
 }
 
 .image-grid {

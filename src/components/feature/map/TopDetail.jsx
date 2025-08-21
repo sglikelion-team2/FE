@@ -31,7 +31,8 @@ export default function TopDetail({
   getCurrentLocation,    // 필요 시 사용 가능
   onNext,
   onPrev,
-  totalCafes
+  totalCafes,
+  onViewChange
 }) {
   const [view, setView] = useState('detail');
 
@@ -215,8 +216,8 @@ return (
               )}
               <div
                 className="plus"
-                onClick={() => setView('photos')}   // 사진 보기로 전환
-                style={{ cursor: 'pointer' }}  // div엔 width 속성 대신 style
+                onClick={() => { setView('photos'); onViewChange?.('photos'); }}
+                style={{ cursor: 'pointer' }}
               >
                 + 더보기
               </div>
@@ -299,7 +300,7 @@ return (
       ) : (
         <CafePhotoInline
           title={placeTitle}
-          onBack={() => setView('detail')}
+          onBack={() => { setView('detail'); onViewChange?.('detail'); }}
         />
       )}
     </div>

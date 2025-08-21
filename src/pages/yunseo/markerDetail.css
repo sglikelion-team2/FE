@@ -83,6 +83,10 @@ ul{
     font-size: 30px;
    
     font-weight: 700;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: 120%; /* 42px */
 
     
     
@@ -99,6 +103,7 @@ ul{
     color: #44392B;
     background-color: #ffffff;
     z-index: 100;
+    cursor: pointer;
 }
 
 .header span{
@@ -285,6 +290,7 @@ ul{
 
     font-family: "LotteMartDream";
     font-weight: 700;
+    cursor: pointer;
 
 
 

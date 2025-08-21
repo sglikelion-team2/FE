@@ -30,6 +30,8 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
   const [nickname, setNickname] = useState('');
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
+  const [isPhotoView, setIsPhotoView] = useState(false); // ← 추가
+
 
   // 정렬
   const toInt = (v) => Number.parseInt(v, 10) || 0;
@@ -94,31 +96,34 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
   })();
 
 
-  return (
-    <div className={`sheet-container ${isExpanded ? 'expanded' : ''}`}>
-      <div className="sheet-header">
-        <div className="grabber-container" onClick={toggleSheet}>
-          <img src={banner_bar} alt="" />
-        </div>
+return (
+  <div className={`sheet-container ${isExpanded ? 'expanded' : ''}`}>
+    <div className="sheet-header">
+      <div className="grabber-container" onClick={toggleSheet}>
+        <img src={banner_bar} alt="" />
+      </div>
 
-        <div className="header-content">
+      <div className="header-content">
         {!isDetailView && (
           <h2 className="sheet-title">
-            지금, <span className="nickname">{nickname}</span>님을 위한<br/>
+            지금, <span className="nickname">{nickname}</span>님을 위한<br />
             공부자리 Top 5 🔥
           </h2>
-          
-        )}
-        {isDetailView && currentIndex >= 0 && currentIndex < orderBadges.length && (
-          <img
-            className="order-badge"
-            src={orderBadges[currentIndex]}
-            alt={`order ${currentIndex + 1}`}
-          />
         )}
 
-        
+        {isDetailView &&
+          !isPhotoView &&
+          currentIndex >= 0 &&
+          currentIndex < orderBadges.length && (
+            <img
+              className="order-badge"
+              src={orderBadges[currentIndex]}
+              alt={`order ${currentIndex + 1}`}
+            />
+          )}
 
+        {/* 사진 뷰일 때는 상단 토글 아이콘 숨김 */}
+        {!isPhotoView && (
           <div className="mode-toggle-icons">
             {/* 리스트(정렬) 모드 아이콘: 활성 시 sorting_act */}
             <img
@@ -129,10 +134,10 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
                 e.stopPropagation();
                 handleModeChange(false);
               }}
-               width="20px"
+              width="20px"
             />
 
-              <img src={line} alt="" height="20px" />
+            <img src={line} alt="" height="20px" />
 
             {/* 상세(뷰어) 모드 아이콘: 활성 시 viewer_act */}
             <img
@@ -142,44 +147,45 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
               onClick={(e) => {
                 e.stopPropagation();
                 handleModeChange(true);
-
               }}
-
               width="20px"
             />
           </div>
-        </div>
-      </div>
-
-      <div className="cafe-list">
-        {isDetailView ? (
-          (selectedCafe || sortedByRank?.[0]) ? (
-            <TopDetail
-              cafe={selectedCafe || sortedByRank[0]}
-              onFindRoute={onFindRoute}
-              getRouteInfo={getRouteInfo}
-              getCurrentLocation={getCurrentLocation}
-              onNext={handleNextCafe}
-              onPrev={handlePrevCafe}
-              totalCafes={sortedByRank.length}
-            />
-          ) : (
-            <div className="empty">표시할 장소가 없습니다.</div>
-          )
-        ) : (
-          sortedByRank.map(cafe => (
-            <CafeListItem
-              key={cafe.rank}
-              cafe={cafe}
-              onFindRoute={onFindRoute}
-              getRouteInfo={getRouteInfo}
-              getCurrentLocation={getCurrentLocation}
-              setSelectedMarker={setSelectedMarker}
-              onCafeClick={handleCafeClick}
-            />
-          ))
         )}
-      </div>
+      </div>{/* header-content */}
+    </div>{/* sheet-header */}
+
+    <div className="cafe-list">
+      {isDetailView ? (
+        (selectedCafe || sortedByRank?.[0]) ? (
+          <TopDetail
+            cafe={selectedCafe || sortedByRank[0]}
+            onFindRoute={onFindRoute}
+            getRouteInfo={getRouteInfo}
+            getCurrentLocation={getCurrentLocation}
+            onNext={handleNextCafe}
+            onPrev={handlePrevCafe}
+            totalCafes={sortedByRank.length}
+            onViewChange={(v) => setIsPhotoView(v === 'photos')}
+          />
+        ) : (
+          <div className="empty">표시할 장소가 없습니다.</div>
+        )
+      ) : (
+        sortedByRank.map((cafe) => (
+          <CafeListItem
+            key={cafe.rank}
+            cafe={cafe}
+            onFindRoute={onFindRoute}
+            getRouteInfo={getRouteInfo}
+            getCurrentLocation={getCurrentLocation}
+            setSelectedMarker={setSelectedMarker}
+            onCafeClick={handleCafeClick}
+          />
+        ))
+      )}
     </div>
-  );
+  </div>
+);
+
 }
