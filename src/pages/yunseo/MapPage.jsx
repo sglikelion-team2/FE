@@ -58,6 +58,7 @@ export default function MapPage() {
   };
 
   const handleQuestDecline = () => {
+    resetAll();
     navigate('/map');
   };
 
