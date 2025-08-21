@@ -158,6 +158,50 @@
 .wifi-arc:hover { opacity: 0.9; }
 .wifi-dot:hover { opacity: 0.9; }
 
+
+/* 와이파이 아이콘들을 감싸는 컨테이너 */
+.wifi-icon-selector {
+  display: flex;
+  flex-direction: column-reverse; /* 아이콘을 아래부터 위로 쌓음 */
+  align-items: center;
+  gap: 8px; /* 아이콘 사이의 간격 */
+  margin: 20px 0;
+}
+
+.wifi-level-icon {
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+}
+
+.wifi-level-icon:hover {
+  transform: scale(1.05);
+}
+
+/* 아이콘 크기를 아래에서 위로 점차 크게 만듭니다.
+  :nth-child(1)가 코드상 첫 번째 요소 = 동그라미(맨 아래)
+*/
+.wifi-icon-selector .wifi-level-icon:nth-child(1) {
+  width: 30px;  /* 동그라미 */
+  padding-right: 3px;
+  margin-top: 8px;
+}
+
+.wifi-icon-selector .wifi-level-icon:nth-child(2) {
+  width: 80px;  /* 작은 아치 */
+   margin-top: 8px;
+}
+
+.wifi-icon-selector .wifi-level-icon:nth-child(3) {
+  width: 125px; /* 중간 아치 */
+  
+}
+
+.wifi-icon-selector .wifi-level-icon:nth-child(4) {
+  width: 183px; /* 큰 아치 */
+  
+  margin-top: 30px;
+
+}
 /* --- PowerSocket.jsx (New Style) --- */
 .outlet-options-new {
   display: flex;
