@@ -10,8 +10,8 @@ export const topCafes = {
           {
             "rank" : 1,
             "pinname" : "스타벅스 신촌점",
-            "lat" : 37.5562,
-            "lng" : 126.9372,
+            "lat" : 37.549945,
+            "lng" : 126.936624,
             "category": "#분위기 좋은",
             "is_partnered" : true,
             "address" : "서울 서대문구 신촌로 115",

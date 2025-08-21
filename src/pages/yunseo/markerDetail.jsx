@@ -1,6 +1,6 @@
 // markerDetail.jsx
-import React, { useState } from 'react';
-import { cafe_info } from './cafeInfo';
+import React, { useEffect, useState } from 'react';
+// import { cafe_info } from './cafeInfo'; /////////카페 하나에 대한 데모 데이터
 import { useNavigate } from 'react-router-dom';
 
 // 아이콘
@@ -25,9 +25,59 @@ import './markerDetail.css';
 const rankImgs = [null, rank1, rank2, rank3, rank4, rank5];
 
 export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRouteInfo }) {
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [view, setView] = useState('detail'); // 'detail' | 'photos'
   const nav = useNavigate();
+  const { title, desc, coords, distance, time } = markerInfo;
+  const [cafeInfo, setCafeInfo] = useState(null);
+  const [cafeError, setCafeError] = useState(null);
+  const [cafeLoading, setCafeLoading] = useState(false);
+
+
+ useEffect(() => {
+   if (!title) return;
+   const ctrl = new AbortController();
+   const API_BASE =
+     import.meta.env.VITE_PROJECT_API // ← Vite는 VITE_ 프리픽스 필요
+     ?? import.meta.env.PROJECT_API   // (있다면) 백업
+     ?? window.PROJECT_API;           // (있다면) 또 다른 백업
+
+   if (!API_BASE) {
+     setCafeError('API base URL is missing (VITE_PROJECT_API)');
+     setCafeInfo(null);
+     return;
+   }
+
+   setCafeLoading(true);
+   setCafeError(null);
+   (async () => {
+     try {
+       const url = `${API_BASE}/mainpage/cafe/${encodeURIComponent(title)}`;
+       const res = await fetch(url, {
+         method: 'GET',
+         signal: ctrl.signal, 
+        //  headers: {"Content-Type": "application/json"},
+       
+       });
+       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+       const data = await res.json();
+       setCafeInfo(data);
+     } catch (e) {
+       if (e.name !== 'AbortError') {
+         console.error('fetch cafe error:', e);
+         setCafeError(e.message || String(e));
+         setCafeInfo(null);
+       }
+     } finally {
+       setCafeLoading(false);
+     }
+   })();
+   return () => ctrl.abort();
+ }, [title]);
+
+
+
 
   const congestionStatus = {
     0: { text: "여유", className: "status-green" },
@@ -37,7 +87,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
 
   if (!markerInfo) return null;
 
-  const { title, desc, coords, distance, time } = markerInfo;
+
 
   const toggleSheet = (e) => {
     if (e.target.tagName === 'BUTTON') return;
@@ -45,7 +95,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
   };
 
   // 데모 데이터(기존 구조 유지)
-  const pin = cafe_info?.[0]?.result?.pin?.[0] ?? {};
+  const pin = cafeInfo?.[0]?.result?.pin?.[0] ?? {};
   const rate = pin.rate;
   const open_hour = pin.open_hour;
   const close_hour = pin.close_hour;
@@ -81,6 +131,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
       default: return { text: '데이터가 없습니다.' };
     }
   };
+  
 
   // (옵션) TopDetail과 동일 플로우가 필요하면 이 핸들러 사용
   const handleFindRoute = async () => {

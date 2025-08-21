@@ -15,7 +15,7 @@ export default function Arrived({ title = '도착지', onClose, onStartQuest }){
       
         
      
-          <div className="arrived-title"><span>{title}</span>근처에 계시네요!</div>
+          <div className="arrived-title"><span>{title}</span> 근처에 계시네요!</div>
           <div className="arrived-sub">매장 안에 도착하셨나요?</div>
          <button className="arrived-button"   onClick={() => {
     console.log('퀘스트 시작 버튼이 클릭되었습니다!');
@@ -24,7 +24,7 @@ export default function Arrived({ title = '도착지', onClose, onStartQuest }){
             네! 공부할 준비가 되었어요🔥</button>
           
        
-        <button className="arrived-close" onClick={onClose} aria-label="닫기">×</button>
+        {/* <button className="arrived-close" onClick={onClose} aria-label="닫기">×</button> */}
       </div>
     
   );

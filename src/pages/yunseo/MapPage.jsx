@@ -10,7 +10,7 @@ import Arrived from './Arrived.jsx';
 
 import FindRoute from './findRoute.jsx';
 
-import { placeData } from './pinPlace';
+// import { placeData } from './pinPlace';
 import { topCafes } from '../../mocks/cafe-data';
 
 import img0 from '../../assets/c_0.png';
@@ -48,6 +48,8 @@ export default function MapPage() {
   const [reloadKey, setReloadKey] = useState(0); // ✅ 초기화 후 재-Init 용 키
   const navigate = useNavigate();
   const [arrivedOpen, setArrivedOpen] = useState(false); // ⬅ 추가
+  const [places, setPlaces] = useState([]); // ← 추가 (디버깅/재사용용)
+  const [questTargetTitle, setQuestTargetTitle] = useState('');
 
   
 
@@ -61,16 +63,24 @@ export default function MapPage() {
 
   const handleQuestAccept = () => {
     setIsQuestModalOpen(false);
-    navigate('/quest');
+    navigate('/quest',{ state: { title: questTargetTitle } });
   };
 
-  const places = placeData.result.pin.map((place) =>({
-    lat : place.lat,
-    lng : place.lng,
-    title: place.pinname,
-    cong: place.congestion,
-    rank : place.rank
-  }));
+    // 수정 후 ✅
+// 1. Arrived 팝업의 '네!' 버튼을 누를 때 실행될 함수를 새로 만듭니다.
+  const handleStartQuest = (title) => {
+    setArrivedOpen(false);      // Arrived 팝업 닫기
+    setQuestTargetTitle(title); // ✅ 전달받은 장소 이름을 state에 저장
+    setIsQuestModalOpen(true);  // QuestArrival 팝업 열기
+  };
+
+  // const places = placeData.result.pin.map((place) =>({
+  //   lat : place.lat,
+  //   lng : place.lng,
+  //   title: place.pinname,
+  //   cong: place.congestion,
+  //   rank : place.rank
+  // }));
 
   const [topCafesWithDistance, setTopCafesWithDistance] = useState([]);
 
@@ -463,6 +473,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         });
         mapInstance.current = map;
         const bounds = new window.Tmapv2.LatLngBounds();
+         let pinsForMarkers = [];
 
         // 사용자 위치 마커
         try {
@@ -483,12 +494,91 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
           bounds.extend(pos); 
           map.setCenter(pos);
           setCurrentLocation(userLocation);
+
+
+
+
+             // === NEW: placeData를 API로 가져오기 ===
+         // localStorage에서 이름
+          const storedNickname = localStorage.getItem('current_user') || '방문자';
+          // 환경변수 기반 API 베이스 (필요 시 조정)
+         const API_BASE =
+           import.meta.env.VITE_PROJECT_API ??
+            import.meta.env.PROJECT_API ??
+            window.PROJECT_API ??
+            "";
+          if (!API_BASE) {
+            console.warn('API base URL이 비어 있습니다. (.env의 VITE_PROJECT_API 확인)');
+          }
+          const url =
+            `${API_BASE}/mainpage/${encodeURIComponent(storedNickname)}` +
+            `?lat=${userLocation.lat}&lng=${userLocation.lng}`;
+
+          // GET이지만 서버 요구대로 JSON body 포함
+          // (주의: 크로스 오리진이면 프리플라이트 발생 가능)
+         let apiPins = [];
+          try {
+            const ctrl = new AbortController();
+            const res = await fetch(url, {
+              method: 'GET',
+              signal: ctrl.signal,
+              headers: {
+                // 'Accept': 'application/json',
+                // 'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                name: storedNickname,
+                lat: userLocation.lat,
+                lng: userLocation.lng,
+              }),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+
+            // 응답 스키마에 맞춰 매핑 (기존 구조 유지 시도)
+           // 기대: data.result.pin = [{ lat, lng, pinname, congestion, rank }, ...]
+            const rawPins =
+              (data?.result?.pin) ??
+              (data?.result) ??
+              (data?.pins) ??
+              data;
+            apiPins = Array.isArray(rawPins)
+              ? rawPins.map(p => ({
+                  lat: p.lat,
+                  lng: p.lng,
+                  title: p.pinname ?? p.title ?? p.name,
+                  cong: p.congestion ?? p.cong ?? 0,
+                  rank: p.rank ?? p.rankNo ?? 999,
+                })).filter(v => Number.isFinite(v.lat) && Number.isFinite(v.lng))
+              : [];
+            setPlaces(apiPins); // state에도 보관
+          } catch (e) {
+            console.warn('place API 요청 실패:', e);
+            // 필요하면 더미 데이터로 폴백하려면 아래 주석 해제
+            // apiPins = (placeData?.result?.pin ?? []).map(place => ({
+            //   lat: place.lat,
+            //   lng: place.lng,
+            //   title: place.pinname,
+            //   cong: place.congestion,
+           //   rank: place.rank,
+            // }));
+            // setPlaces(apiPins);
+          }
+
+          // === 이후 마커 생성은 apiPins 기준으로 ===
+          
+          pinsForMarkers = apiPins// api 성공 시 생성, 실패 시 빈 배열
+
+          // 카페 마커들
+
+
+
         } catch (locationError) {
           console.warn("⚠️ 현재 위치를 가져오는 데 실패했습니다:", locationError);
         }
 
         // 카페 마커들
-        for (const m of places) {
+        for  (const m of pinsForMarkers) {
 
 
           const pos = new window.Tmapv2.LatLng(m.lat, m.lng);
@@ -592,14 +682,20 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
       </div>
 
       {arrivedOpen && (
-      <Arrived
-        title={findRouteInfo?.title || '도착지'}
-        onClose={() => setArrivedOpen(false)}
-            onStartQuest={() => {
-     // 필요하면 Arrived를 닫고(선택), 최상위 모달을 켭니다.
-       setArrivedOpen(false);
-      setIsQuestModalOpen(true);}}
-      />
+    //   <Arrived
+    //     title={findRouteInfo?.title || '도착지'}
+    //     onClose={() => setArrivedOpen(false)}
+    //         onStartQuest={() => {
+    //  // 필요하면 Arrived를 닫고(선택), 최상위 모달을 켭니다.
+    //    setArrivedOpen(false);
+    //   setIsQuestModalOpen(true);}}
+    //   />
+    <Arrived
+  title={findRouteInfo?.title || selectedMarker?.title || '도착지'}
+  onClose={() => setArrivedOpen(false)}
+  // ✅ onStartQuest가 handleStartQuest를 호출하고, 현재 장소 title을 전달하도록 수정
+  onStartQuest={() => handleStartQuest(findRouteInfo?.title || selectedMarker?.title || '도착지')}
+/>
     )}
 
 
@@ -647,13 +743,9 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
 
       {isQuestModalOpen && (
         <QuestArrival 
-                  title={findRouteInfo?.title || '도착지'} 
-          // 팝업을 닫는 함수를 onDecline이라는 이름으로 전달
-          onDecline={() => {
-            setIsQuestModalOpen(false); // 팝업 상태를 false로 바꿔 닫기
-            resetAll();
-            navigate('/map'); // URL도 변경
-          }} />
+    onYes={handleQuestAccept}
+    onNo={handleQuestDecline}
+  />
       )}
     </div>
   );

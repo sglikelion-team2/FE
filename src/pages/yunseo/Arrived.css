@@ -1,29 +1,83 @@
-/* Arrived.css */
+@font-face {
+  font-family: 'LotteMartDream';
+  font-style: normal;
+  font-weight: 400;
+  src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff') format('woff');
+}
+@font-face {
+  font-family: 'LotteMartDream';
+  font-style: normal;
+  font-weight: 700;
+  src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamBold.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamBold.woff') format('woff');
+}
+@font-face {
+  font-family: 'LotteMartDream';
+  font-style: normal;
+  font-weight: 300;
+  src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamLight.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamLight.woff') format('woff');
+}
+.lottemartdream * {
+ font-family: 'LotteMartDream', sans-serif;
+}
 
 /* 맵 페이지 컨테이너가 position: relative 면 정확히 맵 상단에 붙습니다.
    아니라면 fixed 로도 잘 보이도록 대비. */
 .arrived-root {
+  box-sizing: border-box;
   position: absolute;
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100000; /* HUD보다 위 */
  
-  background-color: aliceblue;
+  border-radius: 10px;
+  border: 1px solid var(--color-text-secondary, #57534E);
+  background: var(--Color, #FFF);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+
+  width: 370px; 
+
+  padding: 12px 17px 11px 17px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  ;
+
+
 }
 
 /* 필요시 아래를 주석 해제하면 화면 고정(뷰포트 기준) */
 .arrived-root { position: fixed; }
 
-.arrived-card {
-  position: relative;
-  width: min(640px, calc(100vw - 24px));
-  height: 88px;              /* SVG 비율에 맞춰 조정 */
-  pointer-events: auto;      /* 카드 내부는 클릭 가능 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.arrived-title{
+  
+font-family: "LotteMartDream";
+font-size: 12px;
+color: var(--color-secondary-text-for-primary-dark, #32302D);
+
 }
+
+.arrived-title span{
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary-Dark, #F59E0B);
+
+}
+
+.arrived-sub{
+  
+
+font-family: "LotteMartDream";
+font-size: 20px;
+color: var(--color-secondary-text-for-primary-dark, #32302D);
+letter-spacing: 0.29px;
+font-weight: 700;
+line-height: 142.9%;
+}
+
+
+
 
 .arrived-bg {
   position: absolute;
@@ -33,27 +87,7 @@
   object-fit: contain;       /* SVG가 카드 영역에 맞게 */
   filter: drop-shadow(0 6px 16px rgba(0,0,0,0.25)); /* 살짝 그림자 */
 }
-
-.arrived-content {
-  position: relative;
-  text-align: center;
-  padding: 18px 64px 18px 64px; /* 양옆 여유: 닫기 버튼/모양 대비 */
-  white-space: nowrap;
-}
-
-.arrived-title {
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1.2;
-  color: #111;
-}
-
-.arrived-sub {
-  margin-top: 4px;
-  font-size: 14px;
-  color: #333;
-  opacity: 0.9;
-}
+ 
 
 /* 닫기 버튼 */
 .arrived-close {
@@ -75,6 +109,18 @@
 /* 진입 애니메이션(선택) */
 .arrived-root {
   animation: arrived-slide-in 220ms ease-out;
+}
+
+.arrived-button{
+  width: 100%;
+  font-family: "LotteMartDream";
+  height: 35px;
+  border-radius: 8px;
+  background: var(--color-secondary-Background-Dark, #44392B);
+  text-align: center;
+  color: var(--Color, #FFF);
+  font-size: 12px;
+  margin-top: 10px;
 }
 
 @keyframes arrived-slide-in {
