@@ -41,20 +41,20 @@ export default function Quest() {
     // 퀘스트에 따라 API 경로와 보낼 데이터를 설정
     switch (currentQuestKey) {
       case 'noise':
-        endpoint = '/quest/noise';
+        endpoint = '/quest/{name}/noise';
         payload = { name: currentUser, pin_name: storeTitle, noise: questData.noiseLevel };
         break;
       case 'wifi':
-        endpoint = '/quest/wifi';
+        endpoint = '/quest/{name}/wifi';
         payload = { name: currentUser, pin_name: storeTitle, wifi: questData.wifiStrength };
         break;
       case 'power':
-        endpoint = '/quest/plugbar';
+        endpoint = '/quest/{name}/plugbar';
         const powerMap = { 'few': 1, 'average': 2, 'many': 3 };
         payload = { name: currentUser, pin_name: storeTitle, plugbar: powerMap[questData.powerSocket] };
         break;
       case 'photo':
-        endpoint = '/quest/photo';
+        endpoint = '/quest/{name}/atmos';
         isFormData = true;
         const formData = new FormData();
         formData.append('photo', questData.photo);
@@ -67,7 +67,10 @@ export default function Quest() {
 
     try {
       // API 요청 보내기
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+
+        const finalEndpoint = endpoint.replace('{name}', encodeURIComponent(currentUser));
+
+      const response = await fetch(`${API_BASE_URL}${finalEndpoint}`, {
         method: 'POST',
         headers: isFormData ? {} : { 'Content-Type': 'application/json' },
         body: isFormData ? payload : JSON.stringify(payload),
