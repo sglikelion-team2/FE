@@ -155,7 +155,7 @@ return (
       </div>{/* header-content */}
     </div>{/* sheet-header */}
 
-    <div className="cafe-list">
+    <div className={`cafe-list ${!isDetailView ? 'use-flex' : ''}`}>
       {isDetailView ? (
         (selectedCafe || sortedByRank?.[0]) ? (
           <TopDetail

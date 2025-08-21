@@ -122,7 +122,8 @@
 /* 카페 리스트 영역 */
 .cafe-list {
   
-
+  margin-top:20px ;
+  margin-bottom: 50px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* 아이폰 하단 안전 영역 여백 */
 }
@@ -142,10 +143,20 @@
 
 
 
+
+
+
+
 .mode-toggle-icons{
   display: flex;
   gap: 4px;
   width: 100px;
   align-items: flex-end;
   justify-content: flex-end;
+}
+
+.cafe-list.use-flex {
+  display: flex;
+  flex-direction: column;  /* 가로 배치면 row */
+  gap: 12px;               /* 카드 사이 간격 */
 }
