@@ -154,10 +154,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
               </div>
 
               <img id="ui_bar" src={bar} alt="" />
-                          <button className="find-route-button" onClick={handleFindRoute}>
-              카공 명당 찾기
-              <img src={routeIcon} alt="" />
-            </button>
+
 
               <div className="ditail_2">
                 {/* 혼잡도 */}
@@ -211,6 +208,11 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
             </div>
 
             {/* 길찾기 버튼 */}
+
+                                      <button className="find-route-button" onClick={handleFindRoute}>
+              카공 명당 찾기
+              <img src={routeIcon} alt="" />
+            </button>
 
           </>
         ) : (

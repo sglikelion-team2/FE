@@ -507,10 +507,11 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
 
           // Top5 표시용 별 아이콘
           if (m.rank >= 1 && m.rank <= 5) {
+            const BIG_SIZE = new window.Tmapv2.Size(28, 38);
             const starIcon = new window.Tmapv2.Marker({
               position: pos,
               icon: ICON_URLS[3],
-              iconSize: new window.Tmapv2.Size(22, 30),
+              iconSize: BIG_SIZE,
               map
             });
             starIcon.markerData = { ...m, coords: { lat: m.lat, lng: m.lng } };

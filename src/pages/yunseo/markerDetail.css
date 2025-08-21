@@ -173,6 +173,8 @@ ul{
     color: #57534E;
 }
 .rate_con{
+    display: flex;
+    gap: 5px;
     font-size: 30px;
     color: #F59E0B;
 }
