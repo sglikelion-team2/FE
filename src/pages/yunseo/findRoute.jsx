@@ -2,6 +2,8 @@
 import React from 'react';
 import './FindRoute.css';
 
+import routeIcon from "../../assets/map/detail_info/routeIcon.svg";
+
 
 export default function FindRoute({ findRouteInfo, onClose }) {
 
@@ -28,20 +30,25 @@ export default function FindRoute({ findRouteInfo, onClose }) {
 
 
         <div className="route-summary">
-          <h2>경로 안내</h2>
+          <div className="info-box">
+            <div className='route-name'>최단 거리 ✏️</div>
+             <div className="time-box">
+              {time} min
+             </div>
 
-          <div className="info-box">
-            <span>도착지:</span>
-            <strong>{title}</strong>
           </div>
-          <div className="info-box">
-            <span>총 거리:</span>
-            <strong>{distance} m</strong>
+          {/* <div className="distance-box">
+            
+            {distance} m
+          </div> */}
+          <div className="img-box">
+            <div className="routIcon-box">
+            <img src={routeIcon} alt="" width="24px"/>
+            </div>
           </div>
-          <div className="info-box">
-            <span>예상 시간:</span>
-            <strong>{time} 분</strong>
-          </div>
+
+
+
         </div>
       </div>
     </div>
