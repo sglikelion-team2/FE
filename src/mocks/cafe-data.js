@@ -32,8 +32,8 @@ export const topCafes = {
           {
             "rank" : 2,
             "pinname" : "투썸플레이스 신촌점",
-            "lat" : 37.5559,
-            "lng" : 126.9365,
+            "lat" : 37.550257,
+            "lng" : 126.943152,
             "category": "#공부하기 좋은",
             "is_partnered" : false,
             "address" : "서울 서대문구 신촌역로 12",
