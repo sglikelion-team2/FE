@@ -352,7 +352,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         if (dest && !arrivalAlertedRef.current) {
           const dToEnd = haversine(routeLatLngsRef.current[lastIdxRef.current], dest);
           setNavDebug(d => ({ ...d, dToEnd: Math.round(dToEnd) }));
-          if (dToEnd <= 50) {
+          if (dToEnd <= 1000) {
             arrivalAlertedRef.current = true;
             alert("도착했습니다.");
             setArrivedOpen(true); // ⬅ 팝업 열기
@@ -726,7 +726,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
 
         
         if (!bounds.isEmpty()) {
-          map.fitBounds(bounds, { left: 20, top: 20, right: 20, bottom: 20 });
+          map.fitBounds(bounds, { left: 500, top: 500, right: 500, bottom: 500 });
         }
       } catch (e) {
         console.error(e);
@@ -756,7 +756,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
   return (
     <div className="map-page-container">
       <div ref={mapRef} id="map_div" style={{ width: "100%", height: "100%" }} />
-      <div style={hudStyle}>
+      {/* <div style={hudStyle}>
        <div><b>NAV DEBUG</b></div>
         <div>secure: {String(navDebug.secure)} / geo: {String(navDebug.hasGeo)}</div>
         <div>watchAlive: {String(navDebug.watchAlive)}</div>
@@ -765,7 +765,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         <div>dToEnd: {navDebug.dToEnd ?? '-' } m</div>
         <div>pos: {navDebug.lat?.toFixed?.(5)}, {navDebug.lng?.toFixed?.(5)}</div>
         <div>ts: {navDebug.ts ? new Date(navDebug.ts).toLocaleTimeString() : '-'}</div>
-      </div>
+      </div> */}
 
 
       <div className="point-container">
@@ -836,6 +836,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
 
       {isQuestModalOpen && (
         <QuestArrival 
+        title={questTargetTitle}
     onYes={handleQuestAccept}
     onNo={handleQuestDecline}
   />
