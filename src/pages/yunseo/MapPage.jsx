@@ -4,6 +4,7 @@ import QuestArrival from '../../components/feature/quest/QuestArrival';
 import TopCafesSheet from '../../components/feature/map/TopCafesSheet';
 import MarkerDetail from "./markerDetail";
 import axios from "axios";
+import './MapPage.css';
 
 import Arrived from './Arrived.jsx';  
 
@@ -11,7 +12,9 @@ import Arrived from './Arrived.jsx';
 import FindRoute from './findRoute.jsx';
 
 // import { placeData } from './pinPlace';
-import { topCafes } from '../../mocks/cafe-data';
+ // import { topCafes } from '../../mocks/cafe-data'; // ← 보존만 하고 사용 안 함
+ // (선택) 원본 응답을 보고 싶다면 보관용 state
+
 
 import img0 from '../../assets/c_0.png';
 import img1 from '../../assets/c_1.png';
@@ -50,6 +53,10 @@ export default function MapPage() {
   const [arrivedOpen, setArrivedOpen] = useState(false); // ⬅ 추가
   const [places, setPlaces] = useState([]); // ← 추가 (디버깅/재사용용)
   const [questTargetTitle, setQuestTargetTitle] = useState('');
+   const [topCafesRaw, setTopCafesRaw] = useState([]);
+   const bootUserLocationRef = useRef(null);
+   const [storedNickname, setStoredNickname] = useState('');
+   const [sotredPoint, setStoredPoint] = useState('0'); 
 
   
 
@@ -480,6 +487,10 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         try {
           const userLocation = await getCurrentLocationOnce();
           const pos = new window.Tmapv2.LatLng(userLocation.lat, userLocation.lng);
+
+          bootUserLocationRef.current = userLocation;
+
+
           const userMarkerIconUrl = `${marker}`;
           const userMarker = new window.Tmapv2.Marker({
             position: pos,
@@ -502,6 +513,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
              // === NEW: placeData를 API로 가져오기 ===
          // localStorage에서 이름
           const storedNickname = localStorage.getItem('current_user') || '방문자';
+          setStoredNickname(storedNickname); // state에 저장 (나중에 사용)
           // 환경변수 기반 API 베이스 (필요 시 조정)
          const API_BASE =
            process.env.REACT_APP_PROJECT_API ??
@@ -539,6 +551,8 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
               (data?.result) ??
               (data?.pins) ??
               data;
+
+          setStoredPoint(data?.result?.point ?? '0'); // ⬅ 포인트 저장 (나중에 사용)
             apiPins = Array.isArray(rawPins)
               ? rawPins.map(p => ({
                   lat: p.lat,
@@ -623,18 +637,93 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
           markersRef.current.push(placeMarker);
         }
 
-        // Top5 카페 거리/시간
-        const updatedTopCafes = await Promise.all(
-          topCafes.result.pin.map(async (cafe) => {
-            const routeInfo = await getRouteInfo({ lat: cafe.lat, lng: cafe.lng });
-            return {
-              ...cafe,
-              distance: routeInfo ? routeInfo.distance : null,
-              time: routeInfo ? routeInfo.time : null,
-            };
-          })
-        );
-        setTopCafesWithDistance(updatedTopCafes);
+        // 사용자 위치 마커 이후…
+
+ // === NEW: TopCafes를 API로 가져와 후처리는 동일하게 ===
+ try {
+   const storedNickname = localStorage.getItem('current_user') || '방문자';
+   const API_BASE =
+           process.env.REACT_APP_PROJECT_API ??
+            import.meta.env.PROJECT_API ??
+            window.PROJECT_API ??
+            "";
+   if (!API_BASE) {
+     console.warn('API base URL이 비어 있습니다. (.env의 VITE_PROJECT_API 확인)');
+     
+   }
+
+      const loc = bootUserLocationRef.current;
+   if (!loc) {
+     console.warn('초기 위치가 없습니다. TopCafes 요청을 건너뜁니다.');
+   } else {
+   
+     const topUrl =
+       `${API_BASE}/mainpage/${encodeURIComponent(storedNickname)}/top5` +
+       `?lat=${loc.lat}&lng=${loc.lng}`;
+
+   const ctrlTop = new AbortController();
+   const topRes = await fetch(topUrl, {
+     method: 'GET',
+     signal: ctrlTop.signal,
+     headers: {
+
+     },
+     // 서버 요구가 "GET + JSON 바디"라면 아래 유지, 아니면 제거
+    
+    
+   });
+   if (!topRes.ok) throw new Error(`HTTP ${topRes.status}`);
+   const topData = await topRes.json();
+
+   console.log('TopCafes API 응답:', topData);
+
+   // 응답 스키마 적응: 배열 꺼내기
+   // 기대 구조: data.result.pin = [{lat,lng,pinname,congestion,rank}, ...]
+   const rawTop =
+     (topData?.result?.pin) ??
+     (topData?.result?.top) ??
+     (topData?.pins) ??
+     (topData?.top) ??
+     [];
+   // (선택) 원본 보관
+   setTopCafesRaw(Array.isArray(rawTop) ? rawTop : []);
+
+   // 이후 후처리 동일: 각 카페에 routeInfo 붙이기
+   const updatedTopCafes = await Promise.all(
+     (Array.isArray(rawTop) ? rawTop : []).map(async (cafe) => {
+       const lat = Number(cafe.lat);
+       const lng = Number(cafe.lng);
+       if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+         return { ...cafe, distance: null, time: null };
+       }
+       const routeInfo = await getRouteInfo({ lat, lng }, { silent: true });
+       return {
+         ...cafe,
+         // 기존 키 호환: title(pinname), cong(congestion)
+         title: cafe.pinname ?? cafe.title ?? cafe.name,
+         cong: cafe.congestion ?? cafe.cong ?? 0,
+         rank: cafe.rank ?? cafe.rankNo ?? 999,
+         distance: routeInfo ? routeInfo.distance : null,
+         time: routeInfo ? routeInfo.time : null,
+       };
+     })
+   );
+   setTopCafesWithDistance(updatedTopCafes);
+ }
+ } catch (e) {
+   console.warn('TopCafes API 요청 실패:', e);
+   // 폴백이 필요하면 mock 사용 (import는 위에서 주석만 했으니, 임시로 풀어서 사용 가능)
+   // const updatedTopCafes = await Promise.all(
+   //   (topCafes?.result?.pin ?? []).map(async (cafe) => {
+   //     const routeInfo = await getRouteInfo({ lat: cafe.lat, lng: cafe.lng }, { silent: true });
+   //     return { ...cafe, distance: routeInfo?.distance ?? null, time: routeInfo?.time ?? null };
+   //   })
+   // );
+   // setTopCafesWithDistance(updatedTopCafes);
+ }
+
+
+
         
         if (!bounds.isEmpty()) {
           map.fitBounds(bounds, { left: 20, top: 20, right: 20, bottom: 20 });
@@ -676,6 +765,13 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         <div>dToEnd: {navDebug.dToEnd ?? '-' } m</div>
         <div>pos: {navDebug.lat?.toFixed?.(5)}, {navDebug.lng?.toFixed?.(5)}</div>
         <div>ts: {navDebug.ts ? new Date(navDebug.ts).toLocaleTimeString() : '-'}</div>
+      </div>
+
+
+      <div className="point-container">
+      <span className='nickname'>{storedNickname}<span>님</span></span>
+      <span className="point">✏️ {sotredPoint}</span>
+      
       </div>
 
       {arrivedOpen && (

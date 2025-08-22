@@ -51,6 +51,13 @@ ul{
    
 }
 
+.header1{
+    margin-top: 15px;
+    
+    display: flex;
+    margin-bottom: 20px;
+}
+
 
 
 
@@ -67,25 +74,31 @@ ul{
     /* background-color: rgb(255, 255, 255); */
 }
 
-.header{
+.header1{
     width: 100%;
-    padding-top: 10px;
+    padding-top: 0px;
     
     gap: 10px; 
     justify-content: start;
     
 }
 
-.cafe-name{
-    text-align: left;
-    margin: 0;
-    line-height: 140%;
-    font-size: 30px;
-   
-    font-weight: 700;
-
-    
-    
+.cafe-name {
+  text-align: left;
+  margin: 0;
+  word-break: keep-all;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 120%; /* 42px */
+  
+  /* ✅ 이 속성 하나로 정리 */
+  overflow-wrap: break-word;
+  width: fit-content
+  
+  /* 불필요한 속성 제거 */
+  /* white-space: normal; (기본값) */
+  /* word-break: keep-all; (줄바꿈이 안 될 수 있음) */
+  /* word-break: break-all; (너무 자주 끊어질 수 있음) */
 }
 
 .close-button{
@@ -99,9 +112,10 @@ ul{
     color: #44392B;
     background-color: #ffffff;
     z-index: 100;
+    cursor: pointer;
 }
 
-.header span{
+.header1 span{
     display: inline-block;
    font-family: "LotteMartDreamBold";
    font-size: 16px;
@@ -117,7 +131,7 @@ ul{
    
 }
 
-.header img{
+.header1 img{
     margin-left: auto;
 }
 
@@ -193,7 +207,7 @@ ul{
 }
 
 .ditail_2{
-    margin-top: 20px;
+    margin-top: 15px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -267,7 +281,8 @@ ul{
 
 .find-route-button {
     
-    margin-top: 30px;
+    margin-top: 40px;
+    margin-bottom: 20px;
    
     width: 100%;
     border: none;
@@ -285,6 +300,7 @@ ul{
 
     font-family: "LotteMartDream";
     font-weight: 700;
+    cursor: pointer;
 
 
 

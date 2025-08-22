@@ -61,6 +61,8 @@ box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
   font-weight: 400;
   line-height: 142.9%; /* 22.864px */
   letter-spacing: 0.232px;
+  text-align: start;
+
 }
 
 .info1 span{
@@ -129,6 +131,7 @@ letter-spacing: 0.233px;
   line-height: 138.5%; /* 16.62px */
   letter-spacing: 0.233px;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .detail-button{
@@ -156,6 +159,7 @@ background-color: #FFF;
   border: none;
   color: var(--color-background-White, #FFF);
   display: flex;
+  cursor: pointer;
 
 }
 
@@ -177,3 +181,4 @@ background-color: #FFF;
   object-fit: cover;
 
 }
+

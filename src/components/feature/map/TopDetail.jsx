@@ -31,7 +31,8 @@ export default function TopDetail({
   getCurrentLocation,    // 필요 시 사용 가능
   onNext,
   onPrev,
-  totalCafes
+  totalCafes,
+  onViewChange
 }) {
   const [view, setView] = useState('detail');
 
@@ -105,7 +106,8 @@ export default function TopDetail({
     noise,
     seat,
     wifi,
-    img_url,
+    img_url1,
+    img_url2,
     distance,  // "x.x" km (문자열일 수 있음)
     time       // "mm" 분 (문자열일 수 있음)
   } = cafe;
@@ -187,8 +189,10 @@ return (
   >
     <div className="sheet-content">
       <div className="header">
+        <div className="cafe-info">
         <div className="cafe-name">{placeTitle}</div>
-        <span>{distance}km</span>
+        <span>{distance}m</span>
+        </div>
         {rankSrc && (   /* rank가 없을 때 빈 img 방지 */
           <img
             className="rank-badge"
@@ -201,12 +205,12 @@ return (
       {view === 'detail' ? (
         <>
           <div className="img_con">
-            {img_url && <img src={img_url} alt="" width="160px" />}
+            {img_url1 && <img src={img_url2} alt="" width="160px" />}
 
             <div className="imgs">
-              {img_url && (
+              {img_url2 && (
                 <img
-                  src={img_url}
+                  src={img_url2}
                   alt=""
                   width="100%"
                  
@@ -215,8 +219,8 @@ return (
               )}
               <div
                 className="plus"
-                onClick={() => setView('photos')}   // 사진 보기로 전환
-                style={{ cursor: 'pointer' }}  // div엔 width 속성 대신 style
+                onClick={() => { setView('photos'); onViewChange?.('photos'); }}
+                style={{ cursor: 'pointer' }}
               >
                 + 더보기
               </div>
@@ -299,7 +303,7 @@ return (
       ) : (
         <CafePhotoInline
           title={placeTitle}
-          onBack={() => setView('detail')}
+          onBack={() => { setView('detail'); onViewChange?.('detail'); }}
         />
       )}
     </div>

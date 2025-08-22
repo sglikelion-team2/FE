@@ -35,7 +35,7 @@ const renderStars = (rating) => {
 };
 
 export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurrentLocation, setSelectedMarker, onCafeClick }) {
-  const { pinname, address, img_url, category, rate, congestion, open_hour, close_hour, lat, lng, distance, time, wifi } = cafe;
+  const { pinname, address, img_url1, category, rate, congestion, open_hour, close_hour, lat, lng, distance, time, wifi } = cafe;
   const isOperating = isCafeOpen(open_hour, close_hour);
 
   const handleFindRoute = async (e) => {
@@ -59,7 +59,7 @@ export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurre
 
       <div className="sub-div1">
         <div className="info1">
-        {pinname}&nbsp;&nbsp;
+        {pinname}&nbsp;
         <span className="cafe-distance">{distance ? `${distance}m` : '거리 정보 없음'}</span>
         </div>
 
@@ -94,7 +94,7 @@ export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurre
       </div>
 
       <div className="sub-div2">
-         <img src={img_url} alt={pinname} className="cafe-image" width="81px" />
+         <img src={img_url1} alt={pinname} className="cafe-image" width="81px" />
       </div>
 
      

@@ -37,6 +37,8 @@ ul{
   touch-action: pan-y;
   -webkit-user-select: none;
   user-select: none;
+  /* background-color: #F59E0B; */
+  height: 100%;
  
 
    
@@ -59,22 +61,51 @@ ul{
 }
 
 .header{
-    padding-top: 10px;
+    width: 100%;
+    padding-top: 0px;
     display: flex;
     gap: 10px; 
+    margin-top: initial;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.cafe-info {
+    display: flex;
+    gap:13px;
 }
 
 .cafe-name{
-    text-align: left;
-    margin: 0;
-    line-height: 140%;
-    font-size: 30px;
-    font-family: LotteMartDream;
-    font-weight: 700;
 
-    
-    
-}
+text-align: left;
+
+margin: 0;
+
+line-height: 140%;
+
+font-size: 30px;
+
+
+font-weight: 700;
+
+white-space: normal;
+
+word-break: keep-all;
+
+overflow-wrap: break-word;
+
+line-height: 120%; /* 42px */
+
+overflow-wrap: break-word;
+
+word-break: break-all;
+
+
+
+
+
+} 
 
 .header span{
     display: inline-block;
@@ -190,6 +221,7 @@ ul{
     
 }
 
+
 .sub-element{
     display: flex;
     flex-direction: row;
@@ -240,7 +272,8 @@ ul{
 
 .find-route-button {
     
-    margin-top: 30px;
+  
+ 
    
     width: 100%;
     border: none;
@@ -249,15 +282,17 @@ ul{
     border-radius: 30px;
     font-size: 20px;
 
-    background-color: #44392B;
-    color: #F8F2E2;
+    /* background-color: #44392B; */
+    color: #000000;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    
 
     font-family: "LotteMartDream";
     font-weight: 700;
+    
+
 
 
 

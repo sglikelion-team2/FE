@@ -67,9 +67,6 @@ export default function Quest() {
 
     try {
       // API 요청 보내기
-
-      console.log("🚀 서버로 보내는 데이터:", payload);
-
         const finalEndpoint = endpoint.replace('{name}', encodeURIComponent(currentUser));
 
       const response = await fetch(`${API_BASE_URL}${finalEndpoint}`, {
