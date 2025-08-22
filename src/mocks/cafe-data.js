@@ -53,8 +53,8 @@ export const topCafes = {
           {
             "rank" : 3,
             "pinname" : "이디야커피 신촌연세로점",
-            "lat" : 37.5583,
-            "lng" : 126.9351,
+            "lat" : 37.485519,
+            "lng" : 126.021896,
             "category": "#가성비",
             "is_partnered" : true,
             "address" : "서울 서대문구 연세로 13",
