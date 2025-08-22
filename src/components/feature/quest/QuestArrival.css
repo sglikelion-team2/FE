@@ -1,86 +1,134 @@
-/* feature/quest/QuestArrival.css */
-*{
-  z-index: 9999; /* 기본적으로 높은 z-index 설정 */
-}
-.arrival-backdrop {
+.quest-arrival-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* 반투명 검은색 배경 */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-.arrival-popup {
-  background-color: white;
-  width: 85%;
-  max-width: 320px;
-  padding: 30px 25px;
+/* ✅ 팝업 컨테이너: Figma 수치 적용 */
+.quest-arrival-popup {
+  position: relative;
+  width: 315px;
+  height: 560px;
+  box-sizing: border-box;
+  padding: 50px 20px;
+
+  border: 4px solid #44392B; /* 테두리 색상은 임의 지정, 필요 시 수정 */
   border-radius: 20px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  
+  /* ✅ 요청하신 그라데이션 배경 적용 */
+  background: 
+    linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+    linear-gradient(180deg, #FFFFFF 47.57%, rgba(251, 191, 36, 0.3) 111.83%);
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-around; /* 내부 컨텐츠 간격 분배 */
+  gap: 15px; 
   text-align: center;
 }
 
-.popup-icon {
-  font-size: 48px;
-  margin-bottom: 15px;
-}
-
-.popup-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.popup-description {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #555;
-  margin-bottom: 20px;
-}
-
-.popup-question {
-  font-size: 20px;
-  font-weight: 800;
-  color: #333;
-  margin-bottom: 25px;
-}
-
-.popup-buttons {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  gap: 15px;
-}
-
-.popup-button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
+/* ✅ 우측 상단 닫기 버튼 */
+.popup-close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
   border: none;
-  font-size: 16px;
-  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+}
+
+.cafe-name-header, .popup-title, .popup-icon-wrapper, .popup-description {
+  margin-bottom: 15px; /* 요소들 간의 간격 */
+}
+
+/* (기존 스타일 유지) */
+.cafe-name-header 
+{ font-size: 14px;
+   font-weight: 500; 
+   color: #555; }
+.popup-title
+ { font-family: 'LotteMartDream', 
+  sans-serif; 
+  font-size: 40px; 
+  font-weight: 700; 
+  color: #44392B;
+ margin: -50px;
+  margin-bottom: 30px; }
+.popup-icon-wrapper
+{ width: 80px; height: 70px; 
+  background-color: transparent; 
+  border-radius: 15px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+ margin-top: -80px;}
+.popup-icon-wrapper svg 
+{ width: 120px; height: 150px; }
+.popup-description
+ { font-family: Pretendard, sans-serif; 
+  font-size: 13px; 
+  color: #44392B; 
+  line-height: 1.6; 
+  
+  margin-top: -20px; 
+}
+
+
+  .popup-buttons {
+  position: absolute; /* 레이어처럼 띄워서 독립적으로 위치 설정 */
+  bottom: 20px;       /* 팝업 맨 아래에서 40px 떨어진 곳에 고정 */
+  left: 50%;          /* 팝업 가로 중앙으로 이동 */
+  transform: translateX(-50%); /* 정확한 중앙 정렬 */
+
+  display: flex;
+  gap: 10px;
+}
+
+
+/* ✅ 개별 버튼: Figma 수치 적용 */
+.popup-button {
+  width: 140px;
+  height: 37px;
+  padding: 10px 20px;
+  box-sizing: border-box;
+
+  border: none;
+  border-radius: 10px;
+  
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-weight: 750px;
+  color: white;
+  cursor: pointer;
+   display: flex; /* 내부 텍스트 중앙 정렬 */
+  justify-content: center;
+  align-items: center;
 }
 
 .popup-button.no {
-  background-color: #f0f0f0;
-  color: #555;
+  background-color: #8E6B35;
+  font-size:11px;
+  font-weight: 400;
+  padding:20px 0px;
 }
 
 .popup-button.yes {
-  background-color: #e6b823;
-  color: white;
-}
+  background-color: white;
+  font-size:12px;
+  font-weight: 400;
+  color:#8E6B35;
+  border-color: #8E6B35;
 
-.popup-button:hover {
-  opacity: 0.9;
 }
