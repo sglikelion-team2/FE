@@ -26,7 +26,7 @@
 /* 'TopCafesSheet' 전체 컨테이너 */
 .sheet-container {
   position: absolute;
-  left: 0; right: 0; bottom: 0;
+  left: 0; right: 0; bottom: 0px;
   
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
@@ -61,19 +61,10 @@
   flex-shrink: 0;
   z-index: 2;
   width: 100%;
+  
 }
 
-.sheet-title{
-  color: #000000;
 
-  /* cheading-small-bold */
-  font-family: "LotteMartDream";
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 28px */
-  letter-spacing: -0.24px;
-}
 
 /* 드래그 바 (grabber) */
 /* .grabber {
@@ -89,7 +80,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 0 32px 0;
+  padding: 18px 0 10px 0;
   width: 100%;
   
   
@@ -99,6 +90,7 @@
 .header-content {
   display: flex;
   justify-content: space-between;
+  margin-top: 10px;
 
 }
 
@@ -109,12 +101,21 @@
 }
 
 .sheet-title {
+  color: #000000;
+
+  /* cheading-small-bold */
+  font-family: "LotteMartDream";
   font-size: 20px;
+  font-style: normal;
   font-weight: 700;
-  margin: 0;
+  line-height: 140%; /* 28px */
+  letter-spacing: -0.24px;
+
+  
 }
 
 .sheet-title .nickname {
+  display: initial;
   color: #e6b823;
 }
 
@@ -125,6 +126,8 @@
   margin-bottom: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* 아이폰 하단 안전 영역 여백 */
+  
+  width: 100%;
 }
 
 .cafe-list::-webkit-scrollbar {
@@ -159,3 +162,5 @@
   flex-direction: column;  /* 가로 배치면 row */
   gap: 12px;               /* 카드 사이 간격 */
 }
+
+

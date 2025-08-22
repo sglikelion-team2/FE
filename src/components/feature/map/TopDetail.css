@@ -61,22 +61,51 @@ ul{
 }
 
 .header{
-    padding-top: 10px;
+    width: 100%;
+    padding-top: 0px;
     display: flex;
     gap: 10px; 
+    margin-top: initial;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.cafe-info {
+    display: flex;
+    gap:13px;
 }
 
 .cafe-name{
-    text-align: left;
-    margin: 0;
-    line-height: 140%;
-    font-size: 30px;
-    font-family: LotteMartDream;
-    font-weight: 700;
 
-    
-    
-}
+text-align: left;
+
+margin: 0;
+
+line-height: 140%;
+
+font-size: 30px;
+
+
+font-weight: 700;
+
+white-space: normal;
+
+word-break: keep-all;
+
+overflow-wrap: break-word;
+
+line-height: 120%; /* 42px */
+
+overflow-wrap: break-word;
+
+word-break: break-all;
+
+
+
+
+
+} 
 
 .header span{
     display: inline-block;

@@ -189,8 +189,10 @@ return (
   >
     <div className="sheet-content">
       <div className="header">
+        <div className="cafe-info">
         <div className="cafe-name">{placeTitle}</div>
-        <span>{distance}km</span>
+        <span>{distance}m</span>
+        </div>
         {rankSrc && (   /* rank가 없을 때 빈 img 방지 */
           <img
             className="rank-badge"

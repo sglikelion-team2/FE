@@ -168,7 +168,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
 
       <div className="sheet-content">
         {/* 상단 정보 */}
-        <div className="header">
+        <div className="header1">
           <div className="cafe-name">{title}</div>
           <span>{distance}m</span>
           <button className="close-button" onClick={onClose} aria-label="닫기">X</button>

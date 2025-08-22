@@ -105,10 +105,10 @@ return (
 
       <div className="header-content">
         {!isDetailView && (
-          <h2 className="sheet-title">
+          <div className="sheet-title">
             지금, <span className="nickname">{nickname}</span>님을 위한<br />
             공부자리 Top 5 🔥
-          </h2>
+          </div>
         )}
 
         {isDetailView &&
