@@ -42,23 +42,23 @@ export default function Quest() {
     switch (currentQuestKey) {
       case 'noise':
         endpoint = '/quest/{name}/noise';
-        payload = { name: currentUser, pin_name: storeTitle, noise: questData.noiseLevel };
+        payload = { name: currentUser, pin_name: storeTitle.trim(), noise: questData.noiseLevel };
         break;
       case 'wifi':
         endpoint = '/quest/{name}/wifi';
-        payload = { name: currentUser, pin_name: storeTitle, wifi: questData.wifiStrength };
+        payload = { name: currentUser, pin_name: storeTitle.trim(), wifi: questData.wifiStrength };
         break;
       case 'power':
         endpoint = '/quest/{name}/plugbar';
         const powerMap = { 'few': 1, 'average': 2, 'many': 3 };
-        payload = { name: currentUser, pin_name: storeTitle, plugbar: powerMap[questData.powerSocket] };
+        payload = { name: currentUser, pin_name: storeTitle.trim(), plugbar: powerMap[questData.powerSocket] };
         break;
       case 'photo':
         endpoint = '/quest/{name}/atmos';
         isFormData = true;
         const formData = new FormData();
         formData.append('photo', questData.photo);
-        formData.append('pin_name', storeTitle);
+        formData.append('pin_name', storeTitle.trim());
         payload = formData;
         break;
       default:
@@ -67,6 +67,8 @@ export default function Quest() {
 
     try {
       // API 요청 보내기
+
+      console.log("🚀 서버로 보내는 데이터:", payload);
 
         const finalEndpoint = endpoint.replace('{name}', encodeURIComponent(currentUser));
 
