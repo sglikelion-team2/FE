@@ -21,7 +21,6 @@
 }
 
 
-
 /* TopCafesSheet.css */
 
 /* 'TopCafesSheet' 전체 컨테이너 */
@@ -55,7 +54,7 @@
 .sheet-header {
   position: sticky;
   top: 0;
-  background: #ffffff;
+  
   /* padding: auto; */
 
   cursor: pointer;
@@ -123,7 +122,7 @@
 .cafe-list {
   
   margin-top:20px ;
-  margin-bottom: 50px;
+  margin-bottom: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* 아이폰 하단 안전 영역 여백 */
 }

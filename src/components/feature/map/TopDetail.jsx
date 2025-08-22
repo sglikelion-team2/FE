@@ -106,7 +106,8 @@ export default function TopDetail({
     noise,
     seat,
     wifi,
-    img_url,
+    img_url1,
+    img_url2,
     distance,  // "x.x" km (문자열일 수 있음)
     time       // "mm" 분 (문자열일 수 있음)
   } = cafe;
@@ -202,12 +203,12 @@ return (
       {view === 'detail' ? (
         <>
           <div className="img_con">
-            {img_url && <img src={img_url} alt="" width="160px" />}
+            {img_url1 && <img src={img_url2} alt="" width="160px" />}
 
             <div className="imgs">
-              {img_url && (
+              {img_url2 && (
                 <img
-                  src={img_url}
+                  src={img_url2}
                   alt=""
                   width="100%"
                  

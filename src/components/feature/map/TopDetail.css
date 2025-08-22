@@ -37,6 +37,8 @@ ul{
   touch-action: pan-y;
   -webkit-user-select: none;
   user-select: none;
+  /* background-color: #F59E0B; */
+  height: 100%;
  
 
    
@@ -190,6 +192,7 @@ ul{
     
 }
 
+
 .sub-element{
     display: flex;
     flex-direction: row;
@@ -240,7 +243,8 @@ ul{
 
 .find-route-button {
     
-    margin-top: 30px;
+  
+ 
    
     width: 100%;
     border: none;
@@ -249,15 +253,17 @@ ul{
     border-radius: 30px;
     font-size: 20px;
 
-    background-color: #44392B;
-    color: #F8F2E2;
+    /* background-color: #44392B; */
+    color: #000000;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    
 
     font-family: "LotteMartDream";
     font-weight: 700;
+    
+
 
 
 
