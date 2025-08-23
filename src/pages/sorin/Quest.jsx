@@ -33,7 +33,7 @@ export default function Quest() {
     if (!currentQuestKey) return;
     
     const currentUser = localStorage.getItem('current_user');
-    const API_BASE_URL = process.env.REACT_APP_PROJECT_API;
+    const API_BASE_URL = "/api";
     let endpoint = '';
     let payload;
     let isFormData = false;

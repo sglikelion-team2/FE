@@ -31,13 +31,14 @@ export default function Nickname() {
   const handleNextClick = async () => { 
     if (isValid) {
       try {
-        const API_URL = `${process.env.REACT_APP_PROJECT_API}/login`; // 엔드포인트는 실제 명세에 맞게 수정
-        
+        const API_URL = `/api/login`;
+
         const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: nickname }),
-        });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name: nickname }),
+  // credentials: "include", // 세션 쓰면
+});
         const data = await response.json();
 
         if (data.isSuccess) {

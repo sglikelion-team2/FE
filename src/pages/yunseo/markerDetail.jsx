@@ -24,6 +24,11 @@ import './markerDetail.css';
 
 const rankImgs = [null, rank1, rank2, rank3, rank4, rank5];
 
+const toHttpsSafeUrl = (u) =>
+  typeof u === "string" && u.startsWith("http://3.39.6.173:8080/")
+    ? u.replace("http://3.39.6.173:8080/", "/api/")
+    : u;
+
 export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRouteInfo }) {
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -38,22 +43,22 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
  useEffect(() => {
    if (!title) return;
    const ctrl = new AbortController();
-   const API_BASE =
-     process.env.REACT_APP_PROJECT_API // ← Vite는 VITE_ 프리픽스 필요
-     ?? import.meta.env.PROJECT_API   // (있다면) 백업
-     ?? window.PROJECT_API;           // (있다면) 또 다른 백업
+  //  const API_BASE =
+  //    process.env.REACT_APP_PROJECT_API // ← Vite는 VITE_ 프리픽스 필요
+  //    ?? import.meta.env.PROJECT_API   // (있다면) 백업
+  //    ?? window.PROJECT_API;           // (있다면) 또 다른 백업
 
-   if (!API_BASE) {
-     setCafeError('API base URL is missing (VITE_PROJECT_API)');
-     setCafeInfo(null);
-     return;
-   }
+  //  if (!API_BASE) {
+  //    setCafeError('API base URL is missing (VITE_PROJECT_API)');
+  //    setCafeInfo(null);
+  //    return;
+  //  }
 
    setCafeLoading(true);
    setCafeError(null);
    (async () => {
      try {
-       const url = `${API_BASE}/mainpage/cafe/${encodeURIComponent(title)}`;
+       const url = `/api/mainpage/cafe/${encodeURIComponent(title)}`;
        const res = await fetch(url, {
          method: 'GET',
          signal: ctrl.signal, 
@@ -104,8 +109,9 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
   const noise = pin.noise;
   const seat = pin.seat;
   const wifi = pin.wifi;
-  const [img1, img2] = [pin.img_url_1, pin.img_url_2];
-
+  const thumbnail=toHttpsSafeUrl(pin.thumbnail);
+  const img1 = toHttpsSafeUrl(pin.img_url_1);
+const img2 = toHttpsSafeUrl(pin.img_url_2);
   // 별점 렌더
   const renderStars = (rating) => {
     const full = Math.floor(Number(rating) || 0);
@@ -178,7 +184,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
           <>
             {/* 이미지 영역 */}
             <div className="img_con">
-              {img1 && <img src={img1} alt="" width="160px" />}
+             {img1 && <img src={toHttpsSafeUrl(img1)} alt="" width="160px" />}
               <div
                 className="imgs"
                 onClick={() => setView('photos')}
@@ -187,7 +193,7 @@ export default function MarkerDetail({ markerInfo, onClose, onFindRoute, getRout
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setView('photos')}
                 style={{ cursor: 'pointer' }}
               >
-                {img2 && <img src={img2} alt="" width="100%" />}
+               {img2 && <img src={toHttpsSafeUrl(img2)} alt="" width="100%" />}
                 <div className="plus">+ 더보기</div>
               </div>
             </div>

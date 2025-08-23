@@ -29,10 +29,6 @@ export default function UserPreferences() {
   
   const [isSelectionComplete, setIsSelectionComplete] = useState(false);
 
-  // 닉네임 불러오기
-  useEffect(() => {
-    setNickname(localStorage.getItem('current_user') || '사용자');
-  }, []);
 
   useEffect(() => {
     setNickname(localStorage.getItem('current_user') || '사용자');
@@ -93,15 +89,19 @@ export default function UserPreferences() {
     }
 
     try {
-      const API_URL = `${process.env.REACT_APP_PROJECT_API}/login/{name}`; // .env 파일의 주소 사용
-      
+     const API_URL = `/api/login/${encodeURIComponent(nickname)}`;
+
       const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiData),
-      });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name: nickname,
+    purpose: apiData.purpose,
+    atmos: apiData.atmos,
+    facility: apiData.facility,
+  }),
+  // credentials: "include",
+});
 
       const data = await response.json();
 
@@ -127,8 +127,7 @@ export default function UserPreferences() {
           <img src={BackIcon} alt="뒤로가기" />
         </button>
         <h1 className="pref-title">
-          <span className="nickname">{nickname}</span>님이<br/>
-          공부하고 싶은 자리는<br/>
+          <span className="nickname">{nickname}</span>님이 공부하고 싶은 자리는<br/>
           이런 곳!
         </h1>
       </div>

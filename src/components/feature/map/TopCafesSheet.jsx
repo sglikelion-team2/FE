@@ -22,7 +22,10 @@ import order5 from "../../../assets/map/detail_info/OrderFifth.svg";
 
 
 
-
+const toHttpsSafeUrl = (u) =>
+  typeof u === "string" && u.startsWith("http://3.39.6.173:8080/")
+    ? u.replace("http://3.39.6.173:8080/", "/api/")
+    : u;
 
 export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRouteInfo, getCurrentLocation, setSelectedMarker }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -36,9 +39,17 @@ export default function TopCafesSheet({ topCafesWithDistance, onFindRoute, getRo
   // 정렬
   const toInt = (v) => Number.parseInt(v, 10) || 0;
   const sortedByRank = useMemo(
-    () => [...(topCafesWithDistance || [])].sort((a, b) => toInt(a.rank) - toInt(b.rank)),
-    [topCafesWithDistance]
-  );
+  () => [...(topCafesWithDistance || [])]
+    .map(c => ({
+      ...c,
+      thumbnail: toHttpsSafeUrl(c.thumbnail || c.thumb),
+      img_url_1: toHttpsSafeUrl(c.img_url_1 || c.img_url1),
+      img_url_2: toHttpsSafeUrl(c.img_url_2 || c.img_url2),
+    }))
+    .sort((a, b) => (parseInt(a.rank,10)||0) - (parseInt(b.rank,10)||0)),
+  [topCafesWithDistance]
+);
+
 
   useEffect(() => {
     const now = new Date();
