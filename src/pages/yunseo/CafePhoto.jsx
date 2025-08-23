@@ -3,7 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './CafePhoto.css'; // CSS 파일을 임포트
 
 import backIcon from "../../assets/map/detail_info/arrow-back.svg"; // 뒤로가기 아이콘
-
+const toHttpsSafeUrl = (u) => {
+  if (!u) return u;
+  const ORIGIN = "http://3.39.6.173:8080/";
+  return u.startsWith(ORIGIN) ? u.replace(ORIGIN, "/api/") : u;
+};
 
 export function CafePhotoInline({ title = '카페 사진', onBack }) {
   const [images, setImages] = useState([]);
@@ -12,64 +16,26 @@ export function CafePhotoInline({ title = '카페 사진', onBack }) {
   console.log("사진 더보기 컴포넌트 렌더링", title);
 
   useEffect(() => {
-    const fetchData = async () => {
- try {
-   
-   const API_BASE =
-           process.env.REACT_APP_PROJECT_API ??
-            import.meta.env.PROJECT_API ??
-            window.PROJECT_API ??
-            "";
-   if (!API_BASE) {
-     console.warn('API base URL이 비어 있습니다. (.env의 VITE_PROJECT_API 확인)');
-     
-   }
-
-
-   
-   
-     const Url =
-       `${API_BASE}/mainpage/${encodeURIComponent(title)}/photos`;
-
-   const ctrlTop = new AbortController();
-   const Res = await fetch(Url, {
-     method: 'GET',
-     signal: ctrlTop.signal,
-     headers: {
-
-     },
-     // 서버 요구가 "GET + JSON 바디"라면 아래 유지, 아니면 제거
-    
-    
-   });
+  const fetchData = async () => {
+    try {
+      const API_BASE = "/api";
+      const Url = `${API_BASE}/mainpage/${encodeURIComponent(title)}/photos`;
+      const Res = await fetch(Url, { method: "GET" });
       if (!Res.ok) {
-        // ✅ 서버가 보낸 에러 바디까지 찍어서 원인 파악
         const text = await Res.text();
         throw new Error(`HTTP ${Res.status} — ${text}`);
       }
-   const Data = await Res.json();
-
-   console.log('TopCafes API 응답:', Data);
-   setImages(Data.result.img_url)
-
- 
- 
- } catch (e) {
-   console.warn('더보기 사진 요청 실패:', e);
-   // 폴백이 필요하면 mock 사용 (import는 위에서 주석만 했으니, 임시로 풀어서 사용 가능)
-   // const updatedTopCafes = await Promise.all(
-   //   (topCafes?.result?.pin ?? []).map(async (cafe) => {
-   //     const routeInfo = await getRouteInfo({ lat: cafe.lat, lng: cafe.lng }, { silent: true });
-   //     return { ...cafe, distance: routeInfo?.distance ?? null, time: routeInfo?.time ?? null };
-   //   })
-   // );
-   // setTopCafesWithDistance(updatedTopCafes);
- } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [title]);
+    const Data = await Res.json();
+const list = Array.isArray(Data?.result?.img_url) ? Data.result.img_url : [];
+setImages(list.map(toHttpsSafeUrl));
+    } catch (e) {
+      console.warn("더보기 사진 요청 실패:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, [title]);
 
   if (loading) return <div className="gallery-container">로딩 중...</div>;
   if (error)   return <div className="gallery-container error">{error}</div>;

@@ -9,6 +9,13 @@ const congestionStatus = {
   2: { text: "혼잡", className: "status-red" }
 };
 
+// 파일 상단 (CafeListItem.jsx, TopDetail.jsx)
+const toHttpsSafeUrl = (u) =>
+  typeof u === "string" && u.startsWith("http://3.39.6.173:8080/")
+    ? u.replace("http://3.39.6.173:8080/", "/api/")
+    : u;
+
+
 const isCafeOpen = (openTime, closeTime) => {
   const now = new Date();
   const [openHour, openMin] = openTime.split(':').map(Number);
@@ -35,8 +42,18 @@ const renderStars = (rating) => {
 };
 
 export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurrentLocation, setSelectedMarker, onCafeClick }) {
-  const { pinname, address, img_url1, category, rate, congestion, open_hour, close_hour, lat, lng, distance, time, wifi } = cafe;
-  const isOperating = isCafeOpen(open_hour, close_hour);
+const { pinname, address, category, rate,
+ congestion, open_hour, close_hour, lat, lng, distance, time, wifi } = cafe;
+
+// 서버가 키를 섞어서 줄 수 있으니 모두 대비
+const rawImg =
+  cafe.img_url_1 ??    // 언더스코어 버전
+  cafe.img_url1   ??   // 낙타표기 버전
+  cafe.thumbnail  ??   // 썸네일 필드
+  cafe.thumb      ??   // 또 다른 썸네일
+  null;
+
+const imgSrc = toHttpsSafeUrl(rawImg);
 
   const handleFindRoute = async (e) => {
     e.stopPropagation();
@@ -94,8 +111,8 @@ export default function CafeListItem({ cafe, onFindRoute, getRouteInfo, getCurre
       </div>
 
       <div className="sub-div2">
-         <img src={img_url1} alt={pinname} className="cafe-image" width="81px" />
-      </div>
+  <img src={imgSrc || ""} alt={pinname} className="cafe-image" width="81px" />
+</div>
 
      
 

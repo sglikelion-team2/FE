@@ -21,6 +21,14 @@ import routeIcon from "../../../assets/map/detail_info/routeIcon.svg";
 
 
 import "./TopDetail.css";
+
+const toHttpsSafeUrl = (u) => {
+  if (!u) return u;
+  const ORIGIN = "http://3.39.6.173:8080/";
+  return u.startsWith(ORIGIN) ? u.replace(ORIGIN, "/api/") : u;
+};
+
+
 const rankImgs = [null, rank1, rank2, rank3, rank4, rank5];
 
 // ⭐️ onNext, onPrev, totalCafes prop 포함
@@ -90,27 +98,17 @@ export default function TopDetail({
 
   if (!cafe) return null;
 
-  // 표시용(없으면 기본값)
-  const {
-    pinname,
-    title,
-    name,
-    rank,
-    address,
-    lat,
-    lng,
-    rate,
-    open_hour,
-    close_hour,
-    congestion,
-    noise,
-    seat,
-    wifi,
-    img_url1,
-    img_url2,
-    distance,  // "x.x" km (문자열일 수 있음)
-    time       // "mm" 분 (문자열일 수 있음)
-  } = cafe;
+// cafe 구조 분해 직후(또는 아래처럼 그대로 교체)
+const {
+  pinname, title, name, rank, address, lat, lng, rate,
+  open_hour, close_hour, congestion, noise, seat, wifi,
+  img_url1, img_url2,        // 카멜표기
+  img_url_1, img_url_2,      // 스네이크표기
+  distance, time
+} = cafe;
+
+const img1 = toHttpsSafeUrl(img_url1 || img_url_1 || cafe.thumbnail || cafe.thumb);
+const img2 = toHttpsSafeUrl(img_url2 || img_url_2);
 
   // 목적지 제목 우선순위
   const placeTitle = pinname || title || name || address || '도착지';
@@ -204,28 +202,28 @@ return (
 
       {view === 'detail' ? (
         <>
-          <div className="img_con">
-            {img_url1 && <img src={img_url2} alt="" width="160px" />}
+       
+<div className="img_con">
+  {img1 && <img src={img1} alt={`${placeTitle} 대표 이미지`} width="160px" />}
 
-            <div className="imgs">
-              {img_url2 && (
-                <img
-                  src={img_url2}
-                  alt=""
-                  width="100%"
-                 
-                  
-                />
-              )}
-              <div
-                className="plus"
-                onClick={() => { setView('photos'); onViewChange?.('photos'); }}
-                style={{ cursor: 'pointer' }}
-              >
-                + 더보기
-              </div>
-            </div>
-          </div>
+  <div className="imgs">
+    {img2 && (
+      <img
+        src={img2}
+        alt={`${placeTitle} 추가 이미지`}
+        width="100%"
+      />
+    )}
+    <div
+      className="plus"
+      onClick={() => { setView('photos'); onViewChange?.('photos'); }}
+      style={{ cursor: 'pointer' }}
+    >
+      + 더보기
+    </div>
+  </div>
+</div>
+
 
           <div className="info">
             <div className="ditail_1">

@@ -515,11 +515,8 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
           const storedNickname = localStorage.getItem('current_user') || '방문자';
           setStoredNickname(storedNickname); // state에 저장 (나중에 사용)
           // 환경변수 기반 API 베이스 (필요 시 조정)
-         const API_BASE =
-           process.env.REACT_APP_PROJECT_API ??
-            import.meta.env.PROJECT_API ??
-            window.PROJECT_API ??
-            "";
+         const API_BASE = "/api"; 
+
           if (!API_BASE) {
             console.warn('API base URL이 비어 있습니다. (.env의 VITE_PROJECT_API 확인)');
           }
@@ -642,25 +639,23 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
  // === NEW: TopCafes를 API로 가져와 후처리는 동일하게 ===
  try {
    const storedNickname = localStorage.getItem('current_user') || '방문자';
-   const API_BASE =
-           process.env.REACT_APP_PROJECT_API ??
-            import.meta.env.PROJECT_API ??
-            window.PROJECT_API ??
-            "";
-   if (!API_BASE) {
-     console.warn('API base URL이 비어 있습니다. (.env의 VITE_PROJECT_API 확인)');
+  //  //const API_BASE =
+  //          process.env.REACT_APP_PROJECT_API ??
+  //           import.meta.env.PROJECT_API ??
+  //           window.PROJECT_API ??
+  //           "";
+  //  if (!API_BASE) {
+  //    console.warn('API base URL이 비어 있습니다. (.env의 VITE_PROJECT_API 확인)');
      
-   }
+  //  }
 
       const loc = bootUserLocationRef.current;
    if (!loc) {
      console.warn('초기 위치가 없습니다. TopCafes 요청을 건너뜁니다.');
    } else {
-   
-     const topUrl =
-       `${API_BASE}/mainpage/${encodeURIComponent(storedNickname)}/top5` +
-       `?lat=${loc.lat}&lng=${loc.lng}`;
-
+   const topUrl =
+  `/api/mainpage/${encodeURIComponent(storedNickname)}/top5` + 
+  `?lat=${loc.lat}&lng=${loc.lng}`;
    const ctrlTop = new AbortController();
    const topRes = await fetch(topUrl, {
      method: 'GET',
