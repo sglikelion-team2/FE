@@ -65,11 +65,12 @@ export default function UserPreferences() {
       "Chill": 5, "트렌디": 6, "Lo-fi": 7, "R&B": 8, "따뜻": 9 
     };
     
-    let facilityCode = null;
+    let facilityCode = 3;
+
     if (needsOutlet && needsWifi) facilityCode = 2;
     else if (needsWifi) facilityCode = 1;
     else if (needsOutlet) facilityCode = 0;
-
+    
     return {
       name: nickname,
       purpose: purposeMap[purpose],
@@ -126,10 +127,20 @@ export default function UserPreferences() {
         <button className="back-button" onClick={() => navigate('/nickname')}>
           <img src={BackIcon} alt="뒤로가기" />
         </button>
-        <h1 className="pref-title">
-          <span className="nickname">{nickname}</span>님이 공부하고 싶은 자리는<br/>
-          이런 곳!
-        </h1>
+<h1 className="pref-title">
+  {/* 1줄: {nickname}님이  — 한 줄 고정 */}
+  <span className="line line-1">
+    <span className="nickname">{nickname}</span>님이
+  </span>
+
+  {/* 2줄 */}
+  <span className="line">공부하고 싶은 자리는</span>
+
+  {/* 3줄 */}
+  <span className="line">이런 곳!</span>
+</h1>
+
+
       </div>
 
       <div className="pref-section">

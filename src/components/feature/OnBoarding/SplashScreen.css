@@ -12,6 +12,25 @@
   /* ✅ Figma에서 전달받은 배경 스타일 적용 */
   background: radial-gradient(169.87% 36.27% at 50% 50%, rgba(251, 191, 36, 0.3) 0%, #FFFFFF 100%);
 }
+/* 살짝 커졌다 줄어드는 로고 */
+@keyframes pulseAnim {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+.pulse {
+  animation: pulseAnim 1.2s ease-in-out infinite;
+}
+
+/* 페이드인 텍스트 */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeInUp 600ms ease-out 200ms both;
+}
+
 
 .splash-text-wrapper {
   /* ✅ Figma에서 전달받은 "글씨 부분" 크기 적용 */

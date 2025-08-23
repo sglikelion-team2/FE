@@ -34,14 +34,28 @@
 .back-button img { height: 24px; }
 
 .pref-title {
+  font-weight: 700;
   font-size: 28px;
-  font-weight: bold;
-  line-height: 1.4;
+  line-height: 1.25;   /* 0.8 쓰면 줄끼리 겹쳐 깨짐 */
   color: #333;
+  margin: 0;
 }
-.pref-title .nickname {
-  color: #E6B823; /* 피그마 메인 컬러 */
+
+.line {
+  display: block;      /* 줄 단위로 확실히 나누기 */
 }
+
+/* 1줄(닉네임+님이)만 한 줄로 고정 + 화면 좁으면 자동 축소 */
+.line-1 {
+  white-space: nowrap;
+  font-size: clamp(20px, 6.5vw, 28px);  /* 👉 길면 자동으로 줄어듦 */
+}
+
+/* 닉네임만 포인트 컬러, 나머지는 검정 */
+.nickname {
+  color: #E6B823;
+}
+
 
 /* --- 각 섹션 --- */
 .pref-section {
