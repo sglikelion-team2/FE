@@ -1,10 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SplashScreen.css'; 
 import ZaritLogo from '../../../assets/icons/zarit-logo.svg';
 
 export default function SplashScreen() {
   const navigate = useNavigate();
+   useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate('/nickname');
+    }, 2500); // 1.2초 뒤 자동 이동 (원하면 800~1500ms로 조정)
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
 
   const handleScreenClick = () => {
     navigate('/nickname');
@@ -23,7 +30,7 @@ export default function SplashScreen() {
       {/* "로고 부분" */}
       <div className="splash-logo-box">
         <img src={ZaritLogo} alt="Zarit Logo" className="splash-logo" />
-        <h1 className="splash-brand-title">Zarit</h1>
+        
       </div>
     </div>
   );
