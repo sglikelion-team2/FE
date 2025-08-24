@@ -20,6 +20,17 @@
  font-family: 'LotteMartDream', sans-serif;
 }
 
+/* 留듭쓽 理쒖긽�� �섑띁 */
+.map-page-container {
+  position: relative;
+  width: 100%;
+  height: 100%; /* �꾩슂�� 100vh濡� */
+  overflow: visible; /* �앹뾽�� �섎젮 蹂댁씠硫� �좎� */
+}
+
+
+/* �꾩갑? �앹뾽�� */
+
 
 .point-container {
   position: absolute;
@@ -57,5 +68,4 @@
   color: black;
   
 }
-
 

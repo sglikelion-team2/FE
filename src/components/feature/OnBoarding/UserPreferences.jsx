@@ -127,18 +127,15 @@ export default function UserPreferences() {
         <button className="back-button" onClick={() => navigate('/nickname')}>
           <img src={BackIcon} alt="뒤로가기" />
         </button>
-<h1 className="pref-title">
+<div className="pref-title">
   {/* 1줄: {nickname}님이  — 한 줄 고정 */}
-  <span className="line line-1">
-    <span className="nickname">{nickname}</span>님이
-  </span>
+  <div className="line line-1">
+    <span >{nickname}</span>님이<br />
+    공부하고 싶은 자리는<br />
+    이런 곳!
+  </div>
 
-  {/* 2줄 */}
-  <span className="line">공부하고 싶은 자리는</span>
-
-  {/* 3줄 */}
-  <span className="line">이런 곳!</span>
-</h1>
+</div>
 
 
       </div>

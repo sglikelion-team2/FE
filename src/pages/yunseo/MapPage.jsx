@@ -58,6 +58,8 @@ export default function MapPage() {
    const [storedNickname, setStoredNickname] = useState('');
    const [sotredPoint, setStoredPoint] = useState('0'); 
 
+   const [isFindRouteOpen, setIsFindRouteOpen] = useState(true); // ⬅ 패널 표시 상태
+
   
 
   const handleArrivalClick = () => {
@@ -405,6 +407,8 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
       time: Number.isFinite(timeNum) ? Math.round(timeNum) : null,     // 분
       title: placeTitle ?? selectedMarker?.title ?? null    
     });
+
+    setIsFindRouteOpen(true); // ⬅ 경로 그릴 때 패널 열기
 
     // ✅ 내비게이션 준비 및 시작 (스냅/축소 렌더)
     preprocessRoute(routeData);     // [[lng,lat], ...] → refs 세팅
@@ -817,9 +821,10 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         />
       )}
 
-      {findRouteInfo && (
+      {findRouteInfo && isFindRouteOpen && (
         <FindRoute 
           findRouteInfo={findRouteInfo} 
+          onMinimize={() => setIsFindRouteOpen(false)} // ⬅ routIcon-box용: 패널만 숨김
           onClose={() => {
             // ✅ 전체 리셋 (마커/폴리라인/상태 초기화 후 재-Init)
             resetAll();

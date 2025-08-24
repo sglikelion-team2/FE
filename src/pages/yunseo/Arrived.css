@@ -47,8 +47,6 @@
 
 }
 
-/* 필요시 아래를 주석 해제하면 화면 고정(뷰포트 기준) */
-.arrived-root { position: fixed; }
 
 .arrived-title{
   

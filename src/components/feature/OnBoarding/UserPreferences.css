@@ -37,12 +37,13 @@
   font-weight: 700;
   font-size: 28px;
   line-height: 1.25;   /* 0.8 쓰면 줄끼리 겹쳐 깨짐 */
-  color: #333;
+  
   margin: 0;
 }
 
 .line {
-  display: block;      /* 줄 단위로 확실히 나누기 */
+  display: block; 
+       /* 줄 단위로 확실히 나누기 */
 }
 
 /* 1줄(닉네임+님이)만 한 줄로 고정 + 화면 좁으면 자동 축소 */
@@ -52,7 +53,7 @@
 }
 
 /* 닉네임만 포인트 컬러, 나머지는 검정 */
-.nickname {
+.pref-title span {
   color: #E6B823;
 }
 

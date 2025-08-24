@@ -100,6 +100,28 @@ letter-spacing: 0.232px;
 }
 
 
+/* 湲곕낯 �곹깭: 蹂댁엫 */
+.find-route-panel {
+  position: absolute;       /* 湲곗〈 �덉씠�꾩썐�� 留욎떠 議곗젙 */
+  left: 0; right: 0;
+  bottom: 20px;
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 1.5s ease, opacity 0.5s ease;
+  will-change: transform, opacity;
+  z-index: 9999;   
+  margin: auto; 
+         /* �ㅻⅨ �⑤꼸 �꾩뿉 */
+}
+
+/* �ロ옒 �좊땲硫붿씠�� �곹깭 */
+.find-route-panel.closing {
+  transform: translateY(200%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+
 
 
 
