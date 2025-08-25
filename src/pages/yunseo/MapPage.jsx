@@ -354,11 +354,11 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         if (dest && !arrivalAlertedRef.current) {
           const dToEnd = haversine(routeLatLngsRef.current[lastIdxRef.current], dest);
           setNavDebug(d => ({ ...d, dToEnd: Math.round(dToEnd) }));
-          if (dToEnd <= 1000) {
+          if (dToEnd <= 100) {
             arrivalAlertedRef.current = true;
             // alert("도착했습니다.");
             setArrivedOpen(true); // ⬅ 팝업 열기
-            console.log('[NAV] ARRIVED <= 15m');
+            console.log('[NAV] ARRIVED <= 100m');
           }
         }
       },
