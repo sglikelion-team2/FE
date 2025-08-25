@@ -6,7 +6,7 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 370px;
+  width: 350px;
   
   background-color: white;
     border: 1px solid var(--color-text-secondary, #57534E);
@@ -15,7 +15,7 @@
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
   padding: 19px 20px 20px 21px;
   box-sizing: border-box;
-  z-index: 1000;
+  z-index: 800;
   font-family: "LotteMartDream";
   
 }
