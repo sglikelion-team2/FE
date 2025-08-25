@@ -356,7 +356,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
           setNavDebug(d => ({ ...d, dToEnd: Math.round(dToEnd) }));
           if (dToEnd <= 1000) {
             arrivalAlertedRef.current = true;
-            alert("도착했습니다.");
+            // alert("도착했습니다.");
             setArrivedOpen(true); // ⬅ 팝업 열기
             console.log('[NAV] ARRIVED <= 15m');
           }
@@ -794,7 +794,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
 
 
       {/* ✅ 조건부 렌더링: 하나의 컴포넌트만 보이도록 */}
-      {!selectedMarker && !findRouteInfo && (
+      {!selectedMarker && !findRouteInfo && !isQuestModalOpen&&(
         <TopCafesSheet
           topCafesWithDistance={topCafesWithDistance}
           onFindRoute={drawRoute}
@@ -821,7 +821,7 @@ const getRouteInfo = async (destinationCoords, { silent = false } = {}) => {
         />
       )}
 
-      {findRouteInfo && isFindRouteOpen && (
+      {findRouteInfo && isFindRouteOpen && !isQuestModalOpen&&(
         <FindRoute 
           findRouteInfo={findRouteInfo} 
           onMinimize={() => setIsFindRouteOpen(false)} // ⬅ routIcon-box용: 패널만 숨김

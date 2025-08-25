@@ -179,7 +179,7 @@ ul{
 .ditail_1{
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 10px;
     gap: 10px;
     font-size: 12px;
@@ -281,7 +281,7 @@ ul{
 
 .find-route-button {
     
-    margin-top: 40px;
+    margin-top: 20px;
     margin-bottom: 20px;
    
     width: 100%;
